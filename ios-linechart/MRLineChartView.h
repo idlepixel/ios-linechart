@@ -29,7 +29,8 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 @interface MRLineChartData : NSObject
 
-@property (nonatomic, strong) UIColor *color;
+@property (nonatomic, strong) UIColor *lineColor;
+@property (nonatomic, strong) UIColor *pointColor;
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, assign) NSUInteger itemCount;
 

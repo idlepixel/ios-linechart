@@ -181,7 +181,7 @@
         NSMutableDictionary *colors = [NSMutableDictionary dictionaryWithCapacity:[data count]];
         for(MRLineChartData *dat in data) {
             [titles addObject:dat.title];
-            [colors setObject:dat.color forKey:dat.title];
+            [colors setObject:dat.pointColor forKey:dat.title];
         }
         self.legendView.titles = titles;
         self.legendView.colors = colors;
@@ -272,7 +272,7 @@
                 CGContextStrokePath(c);
                 
                 CGContextAddPath(c, path);
-                CGContextSetStrokeColorWithColor(c, [data.color CGColor]);
+                CGContextSetStrokeColorWithColor(c, [data.lineColor CGColor]);
                 CGContextSetLineWidth(c, 2);
                 CGContextStrokePath(c);
                 
@@ -287,7 +287,7 @@
                 CGFloat yVal = yStart + round((1.0 - (datItem.y - self.yMin) / yRangeLen) * availableHeight);
                 [self.backgroundColor setFill];
                 CGContextFillEllipseInRect(c, CGRectMake(xVal - 5.5, yVal - 5.5, 11, 11));
-                [data.color setFill];
+                [data.pointColor setFill];
                 CGContextFillEllipseInRect(c, CGRectMake(xVal - 4, yVal - 4, 8, 8));
                 [[UIColor whiteColor] setFill];
                 CGContextFillEllipseInRect(c, CGRectMake(xVal - 2, yVal - 2, 4, 4));

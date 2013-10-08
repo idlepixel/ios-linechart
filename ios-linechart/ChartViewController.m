@@ -38,7 +38,8 @@ NS_INLINE NSString *DateString(NSDate *date)
         d1.xMin = [date1 timeIntervalSinceReferenceDate];
         d1.xMax = [date2 timeIntervalSinceReferenceDate];
         d1.title = @"Foobarbang";
-        d1.color = [UIColor redColor];
+        d1.lineColor = [UIColor redColor];
+        d1.pointColor = [UIColor redColor];
         d1.itemCount = 6;
         NSMutableArray *arr = [NSMutableArray array];
         for (NSUInteger i = 0; i < 4; ++i) {
@@ -68,7 +69,8 @@ NS_INLINE NSString *DateString(NSDate *date)
         d1.xMin = [date1 timeIntervalSinceReferenceDate];
         d1.xMax = [date2 timeIntervalSinceReferenceDate];
         d1.title = @"Bar";
-        d1.color = [UIColor blueColor];
+        d1.lineColor = [UIColor blueColor];
+        d1.pointColor = [UIColor blueColor];
         d1.itemCount = 8;
         NSMutableArray *arr = [NSMutableArray array];
         for (NSUInteger i = 0; i < d1.itemCount - 2; ++i) {
@@ -109,7 +111,8 @@ NS_INLINE NSString *DateString(NSDate *date)
         d.xMin = 1;
         d.xMax = 31;
         d.title = @"The title for the legend";
-        d.color = [UIColor redColor];
+        d.lineColor = [UIColor redColor];
+        d.pointColor = [UIColor redColor];
         d.itemCount = 10;
         
         NSMutableArray *vals = [NSMutableArray new];
