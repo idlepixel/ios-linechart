@@ -85,8 +85,8 @@
 @end
 
 
-#define X_AXIS_SPACE 15
-#define PADDING 10
+#define X_AXIS_SPACE 15.0f
+#define PADDING 10.0f
 
 
 @implementation MRLineChartView
@@ -109,28 +109,28 @@
 
 - (void)initialize
 {
-    self.currentPosView = [[UIView alloc] initWithFrame:CGRectMake(PADDING, PADDING, 1 / self.contentScaleFactor, 50)];
-    self.currentPosView.backgroundColor = [UIColor colorWithRed:0.7 green:0.0 blue:0.0 alpha:1.0];
+    self.currentPosView = [[UIView alloc] initWithFrame:CGRectMake(PADDING, PADDING, 1.0f / self.contentScaleFactor, 50.0f)];
+    self.currentPosView.backgroundColor = [UIColor colorWithRed:0.7f green:0.0f blue:0.0f alpha:1.0f];
     self.currentPosView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     self.currentPosView.alpha = 0.0;
     [self addSubview:self.currentPosView];
     
-    self.legendView = [[MRLegendView alloc] initWithFrame:CGRectMake(self.frame.size.width - 50 - 10, 10, 50, 30)];
+    self.legendView = [[MRLegendView alloc] initWithFrame:CGRectMake(self.frame.size.width - 50.0f - 10.0f, 10.0f, 50.0f, 30.0f)];
     self.legendView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
     self.legendView.backgroundColor = [UIColor clearColor];
     [self addSubview:self.legendView];
     
-    self.xAxisLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 20)];
+    self.xAxisLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 50.0f, 20.0f)];
     self.xAxisLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-    self.xAxisLabel.font = [UIFont boldSystemFontOfSize:10];
+    self.xAxisLabel.font = [UIFont boldSystemFontOfSize:10.0f];
     self.xAxisLabel.textColor = [UIColor grayColor];
     self.xAxisLabel.textAlignment = NSTextAlignmentCenter;
-    self.xAxisLabel.alpha = 0.0;
+    self.xAxisLabel.alpha = 0.0f;
     self.xAxisLabel.backgroundColor = [UIColor clearColor];
     [self addSubview:self.xAxisLabel];
     
     self.backgroundColor = [UIColor whiteColor];
-    self.scaleFont = [UIFont systemFontOfSize:10.0];
+    self.scaleFont = [UIFont systemFontOfSize:10.0f];
     
     self.autoresizesSubviews = YES;
     self.contentMode = UIViewContentModeRedraw;
@@ -139,12 +139,12 @@
 - (void)showLegend:(BOOL)show animated:(BOOL)animated
 {
     if (!animated) {
-        self.legendView.alpha = show ? 1.0 : 0.0;
+        self.legendView.alpha = show ? 1.0f : 0.0f;
         return;
     }
     
     [UIView animateWithDuration:0.3 animations:^{
-        self.legendView.alpha = show ? 1.0 : 0.0;
+        self.legendView.alpha = show ? 1.0f : 0.0f;
     }];
 }
                            
@@ -152,18 +152,18 @@
 {
     [self.legendView sizeToFit];
     CGRect r = self.legendView.frame;
-    r.origin.x = self.frame.size.width - self.legendView.frame.size.width - 3 - PADDING;
-    r.origin.y = 3 + PADDING;
+    r.origin.x = self.frame.size.width - self.legendView.frame.size.width - 3.0f - PADDING;
+    r.origin.y = 3.0f + PADDING;
     self.legendView.frame = r;
     
     r = self.currentPosView.frame;
     CGFloat h = self.frame.size.height;
-    r.size.height = h - 2 * PADDING - X_AXIS_SPACE;
+    r.size.height = h - 2.0f * PADDING - X_AXIS_SPACE;
     self.currentPosView.frame = r;
     
     [self.xAxisLabel sizeToFit];
     r = self.xAxisLabel.frame;
-    r.origin.y = self.frame.size.height - X_AXIS_SPACE - PADDING + 2;
+    r.origin.y = self.frame.size.height - X_AXIS_SPACE - PADDING + 2.0f;
     self.xAxisLabel.frame = r;
     
     [self bringSubviewToFront:self.legendView];
@@ -191,31 +191,31 @@
     
     CGContextRef c = UIGraphicsGetCurrentContext();
     
-    CGFloat availableHeight = self.bounds.size.height - 2 * PADDING - X_AXIS_SPACE;
+    CGFloat availableHeight = self.bounds.size.height - 2.0f * PADDING - X_AXIS_SPACE;
     
-    CGFloat availableWidth = self.bounds.size.width - 2 * PADDING - self.yAxisLabelsWidth;
+    CGFloat availableWidth = self.bounds.size.width - 2.0f * PADDING - self.yAxisLabelsWidth;
     CGFloat xStart = PADDING + self.yAxisLabelsWidth;
     CGFloat yStart = PADDING;
     
-    static CGFloat dashedPattern[] = {4,2};
+    static CGFloat dashedPattern[] = {4.0f,2.0f};
     
     // draw scale and horizontal lines
     CGFloat heightPerStep = self.ySteps == nil || [self.ySteps count] == 0 ? availableHeight : (availableHeight / ([self.ySteps count] - 1));
     
     NSUInteger i = 0;
     CGContextSaveGState(c);
-    CGContextSetLineWidth(c, 1.0);
+    CGContextSetLineWidth(c, 1.0f);
     NSUInteger yCnt = [self.ySteps count];
     for (NSString *step in self.ySteps) {
         [[UIColor grayColor] set];
         CGFloat h = [self.scaleFont lineHeight];
-        CGFloat y = yStart + heightPerStep * (yCnt - 1 - i);
-        [step drawInRect:CGRectMake(yStart, y - h / 2, self.yAxisLabelsWidth - 6, h) withFont:self.scaleFont lineBreakMode:NSLineBreakByClipping alignment:NSTextAlignmentRight];
+        CGFloat y = yStart + heightPerStep * (yCnt - 1.0f - i);
+        [step drawInRect:CGRectMake(yStart, y - h / 2.0f, self.yAxisLabelsWidth - 6.0f, h) withFont:self.scaleFont lineBreakMode:NSLineBreakByClipping alignment:NSTextAlignmentRight];
         
-        [[UIColor colorWithWhite:0.9 alpha:1.0] set];
-        CGContextSetLineDash(c, 0, dashedPattern, 2);
-        CGContextMoveToPoint(c, xStart, round(y) + 0.5);
-        CGContextAddLineToPoint(c, self.bounds.size.width - PADDING, round(y) + 0.5);
+        [[UIColor colorWithWhite:0.9f alpha:1.0f] set];
+        CGContextSetLineDash(c, 0.0f, dashedPattern, 2);
+        CGContextMoveToPoint(c, xStart, round(y) + 0.5f);
+        CGContextAddLineToPoint(c, self.bounds.size.width - PADDING, round(y) + 0.5f);
         CGContextStrokePath(c);
         
         i++;
@@ -223,16 +223,16 @@
     
     NSUInteger xCnt = self.xStepsCount;
     if (xCnt > 1) {
-        CGFloat widthPerStep = availableWidth / (xCnt - 1);
+        CGFloat widthPerStep = availableWidth / (xCnt - 1.0f);
         
         [[UIColor grayColor] set];
-        for(NSUInteger i = 0; i < xCnt; ++i) {
+        for (NSUInteger i = 0; i < xCnt; ++i) {
             NSLog(@"i: %d x: %d", i, xCnt);
-            CGFloat x = xStart + widthPerStep * (xCnt - 1 - i);
+            CGFloat x = xStart + widthPerStep * (xCnt - 1.0f - (CGFloat)i);
             
-            [[UIColor colorWithWhite:0.9 alpha:1.0] set];
-            CGContextMoveToPoint(c, round(x) + 0.5, PADDING);
-            CGContextAddLineToPoint(c, round(x) + 0.5, yStart + availableHeight);
+            [[UIColor colorWithWhite:0.9f alpha:1.0f] set];
+            CGContextMoveToPoint(c, round(x) + 0.5f, PADDING);
+            CGContextAddLineToPoint(c, round(x) + 0.5f, yStart + availableHeight);
             CGContextStrokePath(c);
         }
     }
@@ -251,22 +251,22 @@
                 CGMutablePathRef path = CGPathCreateMutable();
                 CGPathMoveToPoint(path, NULL,
                                   xStart + round(((datItem.x - data.xMin) / xRangeLen) * availableWidth),
-                                  yStart + round((1.0 - (datItem.y - self.yMin) / yRangeLen) * availableHeight));
+                                  yStart + round((1.0f - (datItem.y - self.yMin) / yRangeLen) * availableHeight));
                 for(NSUInteger i = 1; i < data.itemCount; ++i) {
                     MRLineChartDataItem *datItem = data.getData(i);
                     CGPathAddLineToPoint(path, NULL,
                                          xStart + round(((datItem.x - data.xMin) / xRangeLen) * availableWidth),
-                                         yStart + round((1.0 - (datItem.y - self.yMin) / yRangeLen) * availableHeight));
+                                         yStart + round((1.0f - (datItem.y - self.yMin) / yRangeLen) * availableHeight));
                 }
                 
                 CGContextAddPath(c, path);
                 CGContextSetStrokeColorWithColor(c, [self.backgroundColor CGColor]);
-                CGContextSetLineWidth(c, 5);
+                CGContextSetLineWidth(c, 5.0f);
                 CGContextStrokePath(c);
                 
                 CGContextAddPath(c, path);
                 CGContextSetStrokeColorWithColor(c, [data.lineColor CGColor]);
-                CGContextSetLineWidth(c, 2);
+                CGContextSetLineWidth(c, 2.0f);
                 CGContextStrokePath(c);
                 
                 CGPathRelease(path);
@@ -277,14 +277,14 @@
             float xRangeLen = data.xMax - data.xMin;
             for(NSUInteger i = 0; i < data.itemCount; ++i) {
                 MRLineChartDataItem *datItem = data.getData(i);
-                CGFloat xVal = xStart + round((xRangeLen == 0 ? 0.5 : ((datItem.x - data.xMin) / xRangeLen)) * availableWidth);
-                CGFloat yVal = yStart + round((1.0 - (datItem.y - self.yMin) / yRangeLen) * availableHeight);
+                CGFloat xVal = xStart + round((xRangeLen == 0.0f ? 0.5f : ((datItem.x - data.xMin) / xRangeLen)) * availableWidth);
+                CGFloat yVal = yStart + round((1.0f - (datItem.y - self.yMin) / yRangeLen) * availableHeight);
                 [self.backgroundColor setFill];
-                CGContextFillEllipseInRect(c, CGRectMake(xVal - 5.5, yVal - 5.5, 11, 11));
+                CGContextFillEllipseInRect(c, CGRectMake(xVal - 5.5f, yVal - 5.5f, 11.0f, 11.0f));
                 [data.pointColor setFill];
-                CGContextFillEllipseInRect(c, CGRectMake(xVal - 4, yVal - 4, 8, 8));
+                CGContextFillEllipseInRect(c, CGRectMake(xVal - 4.0f, yVal - 4.0f, 8.0f, 8.0f));
                 [[UIColor whiteColor] setFill];
-                CGContextFillEllipseInRect(c, CGRectMake(xVal - 2, yVal - 2, 4, 4));
+                CGContextFillEllipseInRect(c, CGRectMake(xVal - 2.0f, yVal - 2.0f, 4.0f, 4.0f));
             } // for
         } // draw data points
     }
@@ -307,8 +307,8 @@
     CGFloat yRangeLen = self.yMax - self.yMin;
     CGFloat xPos = pos.x - xStart;
     CGFloat yPos = pos.y - yStart;
-    CGFloat availableWidth = self.bounds.size.width - 2 * PADDING - self.yAxisLabelsWidth;
-    CGFloat availableHeight = self.bounds.size.height - 2 * PADDING - X_AXIS_SPACE;
+    CGFloat availableWidth = self.bounds.size.width - 2.0f * PADDING - self.yAxisLabelsWidth;
+    CGFloat availableHeight = self.bounds.size.height - 2.0f * PADDING - X_AXIS_SPACE;
     
     MRLineChartDataItem *closest = nil;
     float minDist = FLT_MAX;
@@ -319,8 +319,8 @@
         float xRangeLen = data.xMax - data.xMin;
         for(NSUInteger i = 0; i < data.itemCount; ++i) {
             MRLineChartDataItem *datItem = data.getData(i);
-            CGFloat xVal = round((xRangeLen == 0 ? 0.5 : ((datItem.x - data.xMin) / xRangeLen)) * availableWidth);
-            CGFloat yVal = round((1.0 - (datItem.y - self.yMin) / yRangeLen) * availableHeight);
+            CGFloat xVal = round((xRangeLen == 0.0f ? 0.5f : ((datItem.x - data.xMin) / xRangeLen)) * availableWidth);
+            CGFloat yVal = round((1.0f - (datItem.y - self.yMin) / yRangeLen) * availableHeight);
             
             float dist = fabsf(xVal - xPos);
             float distY = fabsf(yVal - yPos);
@@ -328,7 +328,7 @@
                 minDist = dist;
                 minDistY = distY;
                 closest = datItem;
-                closestPos = CGPointMake(xStart + xVal - 3, yStart + yVal - 7);
+                closestPos = CGPointMake(xStart + xVal - 3.0f, yStart + yVal - 7.0f);
             }
         }
     }
@@ -339,26 +339,26 @@
     [self.infoView setNeedsLayout];
     [self.infoView setNeedsDisplay];
     
-    if (self.currentPosView.alpha == 0.0) {
+    if (self.currentPosView.alpha == 0.0f) {
         CGRect r = self.currentPosView.frame;
-        r.origin.x = closestPos.x + 3 - 1;
+        r.origin.x = closestPos.x + 3.0f - 1.0f;
         self.currentPosView.frame = r;
     }
     
-    [UIView animateWithDuration:0.1 animations:^{
-        self.infoView.alpha = 1.0;
-        self.currentPosView.alpha = 1.0;
-        self.xAxisLabel.alpha = 1.0;
+    [UIView animateWithDuration:0.1f animations:^{
+        self.infoView.alpha = 1.0f;
+        self.currentPosView.alpha = 1.0f;
+        self.xAxisLabel.alpha = 1.0f;
         
         CGRect r = self.currentPosView.frame;
-        r.origin.x = closestPos.x + 3 - 1;
+        r.origin.x = closestPos.x + 3.0f - 1.0f;
         self.currentPosView.frame = r;
         
         self.xAxisLabel.text = closest.xLabel;
         if(self.xAxisLabel.text != nil) {
             [self.xAxisLabel sizeToFit];
             r = self.xAxisLabel.frame;
-            r.origin.x = round(closestPos.x - r.size.width / 2);
+            r.origin.x = round(closestPos.x - r.size.width / 2.0f);
             self.xAxisLabel.frame = r;
         }
     }];
@@ -366,10 +366,10 @@
 
 - (void)hideIndicator
 {
-    [UIView animateWithDuration:0.1 animations:^{
-        self.infoView.alpha = 0.0;
-        self.currentPosView.alpha = 0.0;
-        self.xAxisLabel.alpha = 0.0;
+    [UIView animateWithDuration:0.1f animations:^{
+        self.infoView.alpha = 0.0f;
+        self.currentPosView.alpha = 0.0f;
+        self.xAxisLabel.alpha = 0.0f;
     }];
 }
 
