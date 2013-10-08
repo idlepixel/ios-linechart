@@ -175,8 +175,14 @@
         NSMutableArray *titles = [NSMutableArray arrayWithCapacity:[data count]];
         NSMutableDictionary *colors = [NSMutableDictionary dictionaryWithCapacity:[data count]];
         for(MRLineChartData *dat in data) {
-            [titles addObject:dat.title];
-            [colors setObject:dat.pointColor forKey:dat.title];
+            if (dat.title) {
+                [titles addObject:dat.title];
+                if (dat.pointColor && !dat.pointsHidden) {
+                    [colors setObject:dat.pointColor forKey:dat.title];
+                } else if (dat.lineColor != nil && !dat.lineHidden) {
+                    [colors setObject:dat.lineColor forKey:dat.title];
+                }
+            }
         }
         self.legendView.titles = titles;
         self.legendView.colors = colors;
