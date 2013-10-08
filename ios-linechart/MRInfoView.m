@@ -18,7 +18,8 @@
 
 @implementation MRInfoView
 
-- (id)initWithFrame:(CGRect)frame {
+- (id)initWithFrame:(CGRect)frame
+{
     if ((self = [super initWithFrame:frame])) {		
         UIFont *fatFont = [UIFont boldSystemFontOfSize:12];
         
@@ -35,20 +36,14 @@
     return self;
 }
 
-- (id)init {
-	if((self = [self initWithFrame:CGRectZero])) {
-		;
-	}
-	return self;
-}
-
 #define TOP_BOTTOM_MARGIN 5
 #define LEFT_RIGHT_MARGIN 15
 #define SHADOWSIZE 3
 #define SHADOWBLUR 5
 #define HOOK_SIZE 8
 
-void CGContextAddRoundedRectWithHookSimple(CGContextRef c, CGRect rect, CGFloat radius) {
+void CGContextAddRoundedRectWithHookSimple(CGContextRef c, CGRect rect, CGFloat radius)
+{
 	//eventRect must be relative to rect.
 	CGFloat hookSize = HOOK_SIZE;
 	CGContextAddArc(c, rect.origin.x + radius, rect.origin.y + radius, radius, M_PI, M_PI * 1.5, 0); //upper left corner
@@ -63,7 +58,8 @@ void CGContextAddRoundedRectWithHookSimple(CGContextRef c, CGRect rect, CGFloat 
 	CGContextAddLineToPoint(c, rect.origin.x, rect.origin.y + radius);
 }
 
-- (void)layoutSubviews {
+- (void)layoutSubviews
+{
     [super layoutSubviews];
     
     [self sizeToFit];
@@ -74,7 +70,8 @@ void CGContextAddRoundedRectWithHookSimple(CGContextRef c, CGRect rect, CGFloat 
     self.infoLabel.frame = CGRectMake(self.bounds.origin.x + 7, self.bounds.origin.y + 2, self.infoLabel.frame.size.width, self.infoLabel.frame.size.height);
 }
 
-- (CGSize)sizeThatFits:(CGSize)size {
+- (CGSize)sizeThatFits:(CGSize)size
+{
     CGSize s = [self.infoLabel.text sizeWithFont:self.infoLabel.font];
     s.height += 15;
     s.height += SHADOWSIZE;
@@ -85,7 +82,8 @@ void CGContextAddRoundedRectWithHookSimple(CGContextRef c, CGRect rect, CGFloat 
     return s;
 }
 
-- (void)drawRect:(CGRect)rect {
+- (void)drawRect:(CGRect)rect
+{
 	CGContextRef c = UIGraphicsGetCurrentContext();
 
 	CGRect theRect = self.bounds;
@@ -122,7 +120,8 @@ void CGContextAddRoundedRectWithHookSimple(CGContextRef c, CGRect rect, CGFloat 
 
 #define MAX_WIDTH 400
 // calculate own frame to fit within parent frame and be large enough to hold the event.
-- (void)recalculateFrame {
+- (void)recalculateFrame
+{
     CGRect theFrame = self.frame;
     theFrame.size.width = MIN(MAX_WIDTH, theFrame.size.width);
     

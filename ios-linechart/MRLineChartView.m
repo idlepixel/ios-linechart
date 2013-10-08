@@ -23,7 +23,8 @@
 
 @implementation NSArray (ArrayFP)
 
-- (NSArray *)mapWithBlock:(id (^)(id obj))block {
+- (NSArray *)mapWithBlock:(id (^)(id obj))block
+{
     NSMutableArray *result = [[NSMutableArray alloc] init];
     for(id val in self) {
         id mappedVal = block(val);
@@ -37,10 +38,10 @@
 
 @interface MRLineChartDataItem ()
 
-@property (readwrite) float x; // should be within the x range
-@property (readwrite) float y; // should be within the y range
-@property (readwrite) NSString *xLabel; // label to be shown on the x axis
-@property (readwrite) NSString *dataLabel; // label to be shown directly at the data item
+@property (nonatomic, assign, readwrite) float x; // should be within the x range
+@property (nonatomic, assign, readwrite) float y; // should be within the y range
+@property (nonatomic, strong, readwrite) NSString *xLabel; // label to be shown on the x axis
+@property (nonatomic, strong, readwrite) NSString *dataLabel; // label to be shown directly at the data item
 
 - (id)initWithhX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel;
 
@@ -48,8 +49,9 @@
 
 @implementation MRLineChartDataItem
 
-- (id)initWithhX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel {
-    if((self = [super init])) {
+- (id)initWithhX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel
+{
+    if ((self = [super init])) {
         self.x = x;
         self.y = y;
         self.xLabel = xLabel;
@@ -58,7 +60,8 @@
     return self;
 }
 
-+ (MRLineChartDataItem *)dataItemWithX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel {
++ (MRLineChartDataItem *)dataItemWithX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel
+{
     return [[MRLineChartDataItem alloc] initWithhX:x y:y xLabel:xLabel dataLabel:dataLabel];
 }
 
@@ -74,10 +77,10 @@
 
 @interface MRLineChartView ()
 
-@property MRLegendView *legendView;
-@property MRInfoView *infoView;
-@property UIView *currentPosView;
-@property UILabel *xAxisLabel;
+@property (nonatomic, strong) MRLegendView *legendView;
+@property (nonatomic, strong) MRInfoView *infoView;
+@property (nonatomic, strong) UIView *currentPosView;
+@property (nonatomic, strong) UILabel *xAxisLabel;
 
 - (BOOL)drawsAnyData;
 
@@ -89,44 +92,58 @@
 
 
 @implementation MRLineChartView
-@synthesize data=_data;
 
-- (id)initWithFrame:(CGRect)frame {
-    if((self = [super initWithFrame:frame])) {
-        self.currentPosView = [[UIView alloc] initWithFrame:CGRectMake(PADDING, PADDING, 1 / self.contentScaleFactor, 50)];
-        self.currentPosView.backgroundColor = [UIColor colorWithRed:0.7 green:0.0 blue:0.0 alpha:1.0];
-        self.currentPosView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-        self.currentPosView.alpha = 0.0;
-        [self addSubview:self.currentPosView];
-        
-        self.legendView = [[MRLegendView alloc] initWithFrame:CGRectMake(frame.size.width - 50 - 10, 10, 50, 30)];
-        self.legendView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
-        self.legendView.backgroundColor = [UIColor clearColor];
-        [self addSubview:self.legendView];
-        
-        self.xAxisLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 20)];
-        self.xAxisLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-        self.xAxisLabel.font = [UIFont boldSystemFontOfSize:10];
-        self.xAxisLabel.textColor = [UIColor grayColor];
-        self.xAxisLabel.textAlignment = NSTextAlignmentCenter;
-        self.xAxisLabel.alpha = 0.0;
-        self.xAxisLabel.backgroundColor = [UIColor clearColor];
-        [self addSubview:self.xAxisLabel];
-        
-        self.backgroundColor = [UIColor whiteColor];
-        self.scaleFont = [UIFont systemFontOfSize:10.0];
-        
-        self.autoresizesSubviews = YES;
-        self.contentMode = UIViewContentModeRedraw;
-
-        self.drawsDataPoints = YES;
-        self.drawsDataLines  = YES;
+- (id)initWithFrame:(CGRect)frame
+{
+    if ((self = [super initWithFrame:frame])) {
+        [self initialize];
     }
     return self;
 }
 
-- (void)showLegend:(BOOL)show animated:(BOOL)animated {
-    if(! animated) {
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    if ((self = [super initWithCoder:aDecoder])) {
+        [self initialize];
+    }
+    return self;
+}
+
+- (void)initialize
+{
+    self.currentPosView = [[UIView alloc] initWithFrame:CGRectMake(PADDING, PADDING, 1 / self.contentScaleFactor, 50)];
+    self.currentPosView.backgroundColor = [UIColor colorWithRed:0.7 green:0.0 blue:0.0 alpha:1.0];
+    self.currentPosView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+    self.currentPosView.alpha = 0.0;
+    [self addSubview:self.currentPosView];
+    
+    self.legendView = [[MRLegendView alloc] initWithFrame:CGRectMake(self.frame.size.width - 50 - 10, 10, 50, 30)];
+    self.legendView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+    self.legendView.backgroundColor = [UIColor clearColor];
+    [self addSubview:self.legendView];
+    
+    self.xAxisLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 20)];
+    self.xAxisLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+    self.xAxisLabel.font = [UIFont boldSystemFontOfSize:10];
+    self.xAxisLabel.textColor = [UIColor grayColor];
+    self.xAxisLabel.textAlignment = NSTextAlignmentCenter;
+    self.xAxisLabel.alpha = 0.0;
+    self.xAxisLabel.backgroundColor = [UIColor clearColor];
+    [self addSubview:self.xAxisLabel];
+    
+    self.backgroundColor = [UIColor whiteColor];
+    self.scaleFont = [UIFont systemFontOfSize:10.0];
+    
+    self.autoresizesSubviews = YES;
+    self.contentMode = UIViewContentModeRedraw;
+    
+    self.drawsDataPoints = YES;
+    self.drawsDataLines  = YES;
+}
+
+- (void)showLegend:(BOOL)show animated:(BOOL)animated
+{
+    if (!animated) {
         self.legendView.alpha = show ? 1.0 : 0.0;
         return;
     }
@@ -136,7 +153,8 @@
     }];
 }
                            
-- (void)layoutSubviews {
+- (void)layoutSubviews
+{
     [self.legendView sizeToFit];
     CGRect r = self.legendView.frame;
     r.origin.x = self.frame.size.width - self.legendView.frame.size.width - 3 - PADDING;
@@ -156,8 +174,9 @@
     [self bringSubviewToFront:self.legendView];
 }
 
-- (void)setData:(NSArray *)data {
-    if(data != _data) {
+- (void)setData:(NSArray *)data
+{
+    if (data != _data) {
         NSMutableArray *titles = [NSMutableArray arrayWithCapacity:[data count]];
         NSMutableDictionary *colors = [NSMutableDictionary dictionaryWithCapacity:[data count]];
         for(MRLineChartData *dat in data) {
@@ -171,7 +190,8 @@
     }
 }
 
-- (void)drawRect:(CGRect)rect {
+- (void)drawRect:(CGRect)rect
+{
     [super drawRect:rect];
     
     CGContextRef c = UIGraphicsGetCurrentContext();
@@ -191,7 +211,7 @@
     CGContextSaveGState(c);
     CGContextSetLineWidth(c, 1.0);
     NSUInteger yCnt = [self.ySteps count];
-    for(NSString *step in self.ySteps) {
+    for (NSString *step in self.ySteps) {
         [[UIColor grayColor] set];
         CGFloat h = [self.scaleFont lineHeight];
         CGFloat y = yStart + heightPerStep * (yCnt - 1 - i);
@@ -207,7 +227,7 @@
     }
     
     NSUInteger xCnt = self.xStepsCount;
-    if(xCnt > 1) {
+    if (xCnt > 1) {
         CGFloat widthPerStep = availableWidth / (xCnt - 1);
         
         [[UIColor grayColor] set];
@@ -230,7 +250,7 @@
     } // warn if no data will be drawn
     
     CGFloat yRangeLen = self.yMax - self.yMin;
-    for(MRLineChartData *data in self.data) {
+    for (MRLineChartData *data in self.data) {
         if (self.drawsDataLines) {
             float xRangeLen = data.xMax - data.xMin;
             if(data.itemCount >= 2) {
@@ -276,8 +296,9 @@
     }
 }
 
-- (void)showIndicatorForTouch:(UITouch *)touch {
-    if(! self.infoView) {
+- (void)showIndicatorForTouch:(UITouch *)touch
+{
+    if (! self.infoView) {
         self.infoView = [[MRInfoView alloc] init];
         [self addSubview:self.infoView];
     }
@@ -296,7 +317,7 @@
     float minDistY = FLT_MAX;
     CGPoint closestPos = CGPointZero;
     
-    for(MRLineChartData *data in self.data) {
+    for (MRLineChartData *data in self.data) {
         float xRangeLen = data.xMax - data.xMin;
         for(NSUInteger i = 0; i < data.itemCount; ++i) {
             MRLineChartDataItem *datItem = data.getData(i);
@@ -320,7 +341,7 @@
     [self.infoView setNeedsLayout];
     [self.infoView setNeedsDisplay];
     
-    if(self.currentPosView.alpha == 0.0) {
+    if (self.currentPosView.alpha == 0.0) {
         CGRect r = self.currentPosView.frame;
         r.origin.x = closestPos.x + 3 - 1;
         self.currentPosView.frame = r;
@@ -345,7 +366,8 @@
     }];
 }
 
-- (void)hideIndicator {
+- (void)hideIndicator
+{
     [UIView animateWithDuration:0.1 animations:^{
         self.infoView.alpha = 0.0;
         self.currentPosView.alpha = 0.0;
@@ -353,31 +375,37 @@
     }];
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
     [self showIndicatorForTouch:[touches anyObject]];
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
     [self showIndicatorForTouch:[touches anyObject]];	
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
     [self hideIndicator];
 }
 
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
     [self hideIndicator];
 }
 
 
 #pragma mark Helper methods
 
-- (BOOL)drawsAnyData {
+- (BOOL)drawsAnyData
+{
     return self.drawsDataPoints || self.drawsDataLines;
 }
 
 // TODO: This should really be a cached value. Invalidated iff ySteps changes.
-- (CGFloat)yAxisLabelsWidth {
+- (CGFloat)yAxisLabelsWidth
+{
     NSNumber *requiredWidth = [[self.ySteps mapWithBlock:^id(id obj) {
         NSString *label = (NSString*)obj;
         CGSize labelSize = [label sizeWithFont:self.scaleFont];

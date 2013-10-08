@@ -12,7 +12,7 @@
 @interface MRLegendView : UIView
 
 @property (nonatomic, strong) UIFont *titlesFont;
-@property (strong) NSArray *titles;
-@property (strong) NSDictionary *colors; // maps titles to UIColors
+@property (nonatomic, strong) NSArray *titles;
+@property (nonatomic, strong) NSDictionary *colors; // maps titles to UIColors
 
 @end

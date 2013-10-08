@@ -10,12 +10,12 @@
 #import <CoreGraphics/CoreGraphics.h>
 
 @implementation MRLegendView
-@synthesize titlesFont=_titlesFont;
 
 #define COLORPADDING 15
 #define PADDING 5
 
-- (void)drawRect:(CGRect)rect {
+- (void)drawRect:(CGRect)rect
+{
     CGContextRef c = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(c, [[UIColor colorWithWhite:0.0 alpha:0.1] CGColor]);
     CGPathRef roundedRectPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:7.0f].CGPath;
@@ -23,9 +23,9 @@
     CGContextDrawPath(c, kCGPathFill);
     
     CGFloat y = 0;
-    for(NSString *title in self.titles) {
+    for (NSString *title in self.titles) {
         UIColor *color = [self.colors objectForKey:title];
-        if(color) {
+        if (color) {
             [color setFill];
             CGContextFillEllipseInRect(c, CGRectMake(PADDING + 2, PADDING + round(y) + self.titlesFont.xHeight / 2 + 1, 6, 6));
         }
@@ -37,16 +37,19 @@
     }
 }
 
-- (UIFont *)titlesFont {
-    if(_titlesFont == nil)
+- (UIFont *)titlesFont
+{
+    if(_titlesFont == nil) {
         _titlesFont = [UIFont boldSystemFontOfSize:10];
+    }
     return _titlesFont;
 }
 
-- (CGSize)sizeThatFits:(CGSize)size {
+- (CGSize)sizeThatFits:(CGSize)size
+{
     CGFloat h = [self.titlesFont lineHeight] * [self.titles count];
     CGFloat w = 0;
-    for(NSString *title in self.titles) {
+    for (NSString *title in self.titles) {
         CGSize s = [title sizeWithFont:self.titlesFont];
         w = MAX(w, s.width);
     }

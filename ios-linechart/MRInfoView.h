@@ -8,8 +8,8 @@
 
 @interface MRInfoView : UIView
 
-@property CGPoint tapPoint;
+@property (nonatomic, assign) CGPoint tapPoint;
 
-@property (strong) UILabel *infoLabel;
+@property (nonatomic, strong) UILabel *infoLabel;
 
 @end

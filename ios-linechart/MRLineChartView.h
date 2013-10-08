@@ -16,10 +16,10 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 @interface MRLineChartDataItem : NSObject
 
-@property (readonly) float x; // should be within the x range
-@property (readonly) float y; // should be within the y range
-@property (readonly) NSString *xLabel; // label to be shown on the x axis
-@property (readonly) NSString *dataLabel; // label to be shown directly at the data item
+@property (nonatomic, assign, readonly) float x; // should be within the x range
+@property (nonatomic, assign, readonly) float y; // should be within the y range
+@property (nonatomic, strong, readonly) NSString *xLabel; // label to be shown on the x axis
+@property (nonatomic, strong, readonly) NSString *dataLabel; // label to be shown directly at the data item
 
 + (MRLineChartDataItem *)dataItemWithX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel;
 
@@ -29,14 +29,14 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 @interface MRLineChartData : NSObject
 
-@property (strong) UIColor *color;
-@property (copy) NSString *title;
-@property NSUInteger itemCount;
+@property (nonatomic, strong) UIColor *color;
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, assign) NSUInteger itemCount;
 
-@property float xMin;
-@property float xMax;
+@property (nonatomic, assign) float xMin;
+@property (nonatomic, assign) float xMax;
 
-@property (copy) MRLineChartDataGetter getData;
+@property (nonatomic, copy) MRLineChartDataGetter getData;
 
 @end
 
@@ -46,14 +46,14 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 @property (nonatomic, strong) NSArray *data; // Array of `LineChartData` objects, one for each line.
 
-@property float yMin;
-@property float yMax;
-@property (strong) NSArray *ySteps; // Array of step names (NSString). At each step, a scale line is shown.
-@property NSUInteger xStepsCount; // number of steps in x. At each x step, a vertical scale line is shown. if x < 2, nothing is done
+@property (nonatomic, assign) float yMin;
+@property (nonatomic, assign) float yMax;
+@property (nonatomic, strong) NSArray *ySteps; // Array of step names (NSString). At each step, a scale line is shown.
+@property (nonatomic, assign) NSUInteger xStepsCount; // number of steps in x. At each x step, a vertical scale line is shown. if x < 2, nothing is done
 
-@property BOOL drawsDataPoints; // Switch to turn off circles on data points. On by default.
-@property BOOL drawsDataLines; // Switch to turn off lines connecting data points. On by default.
-@property (strong) UIFont *scaleFont; // Font in which scale markings are drawn. Defaults to [UIFont systemFontOfSize:10].
+@property (nonatomic, assign) BOOL drawsDataPoints; // Switch to turn off circles on data points. On by default.
+@property (nonatomic, assign) BOOL drawsDataLines; // Switch to turn off lines connecting data points. On by default.
+@property (nonatomic, strong) UIFont *scaleFont; // Font in which scale markings are drawn. Defaults to [UIFont systemFontOfSize:10].
 
 - (void)showLegend:(BOOL)show animated:(BOOL)animated;
 
