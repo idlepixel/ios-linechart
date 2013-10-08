@@ -40,6 +40,7 @@ NS_INLINE NSString *DateString(NSDate *date)
         d1.title = @"Foobarbang";
         d1.lineColor = [UIColor redColor];
         d1.pointColor = [UIColor redColor];
+        d1.pointsHidden = YES;
         d1.itemCount = 6;
         NSMutableArray *arr = [NSMutableArray array];
         for (NSUInteger i = 0; i < 4; ++i) {
@@ -71,6 +72,7 @@ NS_INLINE NSString *DateString(NSDate *date)
         d1.title = @"Bar";
         d1.lineColor = [UIColor blueColor];
         d1.pointColor = [UIColor blueColor];
+        d1.lineHidden = YES;
         d1.itemCount = 8;
         NSMutableArray *arr = [NSMutableArray array];
         for (NSUInteger i = 0; i < d1.itemCount - 2; ++i) {

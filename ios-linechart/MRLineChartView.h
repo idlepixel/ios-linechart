@@ -34,6 +34,9 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, assign) NSUInteger itemCount;
 
+@property (nonatomic, assign) BOOL pointsHidden; // Switch to turn off circles on data points.
+@property (nonatomic, assign) BOOL lineHidden; // Switch to turn off lines connecting data points.
+
 @property (nonatomic, assign) float xMin;
 @property (nonatomic, assign) float xMax;
 
@@ -52,8 +55,6 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 @property (nonatomic, strong) NSArray *ySteps; // Array of step names (NSString). At each step, a scale line is shown.
 @property (nonatomic, assign) NSUInteger xStepsCount; // number of steps in x. At each x step, a vertical scale line is shown. if x < 2, nothing is done
 
-@property (nonatomic, assign) BOOL drawsDataPoints; // Switch to turn off circles on data points. On by default.
-@property (nonatomic, assign) BOOL drawsDataLines; // Switch to turn off lines connecting data points. On by default.
 @property (nonatomic, strong) UIFont *scaleFont; // Font in which scale markings are drawn. Defaults to [UIFont systemFontOfSize:10].
 
 - (void)showLegend:(BOOL)show animated:(BOOL)animated;

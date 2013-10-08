@@ -82,8 +82,6 @@
 @property (nonatomic, strong) UIView *currentPosView;
 @property (nonatomic, strong) UILabel *xAxisLabel;
 
-- (BOOL)drawsAnyData;
-
 @end
 
 
@@ -136,9 +134,6 @@
     
     self.autoresizesSubviews = YES;
     self.contentMode = UIViewContentModeRedraw;
-    
-    self.drawsDataPoints = YES;
-    self.drawsDataLines  = YES;
 }
 
 - (void)showLegend:(BOOL)show animated:(BOOL)animated
@@ -244,14 +239,12 @@
     
     CGContextRestoreGState(c);
 
-
-    if (!self.drawsAnyData) {
-        NSLog(@"You configured LineChartView to draw neither lines nor data points. No data will be visible. This is most likely not what you wanted. (But we aren't judging you, so here's your chart background.)");
-    } // warn if no data will be drawn
+    BOOL dataDrawn = NO;
     
     CGFloat yRangeLen = self.yMax - self.yMin;
     for (MRLineChartData *data in self.data) {
-        if (self.drawsDataLines) {
+        if (!data.lineHidden) {
+            dataDrawn = YES;
             float xRangeLen = data.xMax - data.xMin;
             if(data.itemCount >= 2) {
                 MRLineChartDataItem *datItem = data.getData(0);
@@ -279,7 +272,8 @@
                 CGPathRelease(path);
             }
         } // draw actual chart data
-        if (self.drawsDataPoints) {
+        if (!data.pointsHidden) {
+            dataDrawn = YES;
             float xRangeLen = data.xMax - data.xMin;
             for(NSUInteger i = 0; i < data.itemCount; ++i) {
                 MRLineChartDataItem *datItem = data.getData(i);
@@ -294,6 +288,10 @@
             } // for
         } // draw data points
     }
+    
+    if (!dataDrawn) {
+        NSLog(@"You configured LineChartView to draw neither lines nor data points. No data will be visible. This is most likely not what you wanted. (But we aren't judging you, so here's your chart background.)");
+    } // warn if no data was drawn
 }
 
 - (void)showIndicatorForTouch:(UITouch *)touch
@@ -397,11 +395,6 @@
 
 
 #pragma mark Helper methods
-
-- (BOOL)drawsAnyData
-{
-    return self.drawsDataPoints || self.drawsDataLines;
-}
 
 // TODO: This should really be a cached value. Invalidated iff ySteps changes.
 - (CGFloat)yAxisLabelsWidth
