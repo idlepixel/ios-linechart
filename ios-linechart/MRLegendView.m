@@ -7,7 +7,6 @@
 //
 
 #import "MRLegendView.h"
-#import "UIKit+DrawingHelpers.h"
 #import <CoreGraphics/CoreGraphics.h>
 
 @implementation MRLegendView
@@ -19,8 +18,9 @@
 - (void)drawRect:(CGRect)rect {
     CGContextRef c = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(c, [[UIColor colorWithWhite:0.0 alpha:0.1] CGColor]);
-    CGContextFillRoundedRect(c, self.bounds, 7);
-    
+    CGPathRef roundedRectPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:7.0f].CGPath;
+    CGContextAddPath(c, roundedRectPath);
+    CGContextDrawPath(c, kCGPathFill);
     
     CGFloat y = 0;
     for(NSString *title in self.titles) {

@@ -9,7 +9,31 @@
 #import "MRLineChartView.h"
 #import "MRLegendView.h"
 #import "MRInfoView.h"
-#import <objc-utils/NSArray+FPAdditions.h>
+
+//
+// NSArray (ArrayFP) category copied from
+// https://github.com/mruegenberg/objc-utils
+//
+
+@interface NSArray (ArrayFP)
+
+- (NSArray *)mapWithBlock:(id (^)(id obj))block;
+
+@end
+
+@implementation NSArray (ArrayFP)
+
+- (NSArray *)mapWithBlock:(id (^)(id obj))block {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for(id val in self) {
+        id mappedVal = block(val);
+        if(mappedVal)
+            [result addObject:mappedVal];
+    }
+    return result;
+}
+
+@end
 
 @interface MRLineChartDataItem ()
 

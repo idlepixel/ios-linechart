@@ -7,32 +7,41 @@
 //
 
 #import "ChartViewController.h"
-#import "NSDate+Additions.h"
 #import "MRLineChartView.h"
 
 @interface ChartViewController ()
 
 @end
 
+#define kTimeIntervalDay    (60.0f * 60.0f * 24.0f)
+
 @implementation ChartViewController
+
+NS_INLINE NSString *DateString(NSDate *date)
+{
+    return date.description;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
+    NSDate *currentDate = [NSDate date];
+    NSTimeInterval currentTimeInterval = currentDate.timeIntervalSinceReferenceDate;
+    
+    NSDate *date1 = [currentDate dateByAddingTimeInterval:(currentTimeInterval - kTimeIntervalDay * 3.0f)];
+    NSDate *date2 = [currentDate dateByAddingTimeInterval:(currentTimeInterval + kTimeIntervalDay * 2.0f)];
+    
     MRLineChartData *d1x = [MRLineChartData new];
     {
         MRLineChartData *d1 = d1x;
-        NSDate *date1 = [[NSDate date] dateByAddingDays:(-3)];
-        NSDate *date2 = [[NSDate date] dateByAddingDays:2];
         d1.xMin = [date1 timeIntervalSinceReferenceDate];
         d1.xMax = [date2 timeIntervalSinceReferenceDate];
         d1.title = @"Foobarbang";
         d1.color = [UIColor redColor];
         d1.itemCount = 6;
         NSMutableArray *arr = [NSMutableArray array];
-        int y = rand();
-        for(NSUInteger i = 0; i < 4; ++i) {
+        for (NSUInteger i = 0; i < 4; ++i) {
             [arr addObject:@(d1.xMin + (rand() / (float)RAND_MAX) * (d1.xMax - d1.xMin))];
         }
         [arr addObject:@(d1.xMin)];
@@ -47,7 +56,7 @@
         d1.getData = ^(NSUInteger item) {
             float x = [arr[item] floatValue];
             float y = [arr2[item] floatValue];
-            NSString *label1 = [[date1 dateByAddingTimeInterval:x] dateString];
+            NSString *label1 = DateString([date1 dateByAddingTimeInterval:x]);
             NSString *label2 = [NSString stringWithFormat:@"%f", y];
             return [MRLineChartDataItem dataItemWithX:x y:y xLabel:label1 dataLabel:label2];
         };
@@ -56,16 +65,13 @@
     MRLineChartData *d2x = [MRLineChartData new];
     {
         MRLineChartData *d1 = d2x;
-        NSDate *date1 = [[NSDate date] dateByAddingDays:(-3)];
-        NSDate *date2 = [[NSDate date] dateByAddingDays:2];
         d1.xMin = [date1 timeIntervalSinceReferenceDate];
         d1.xMax = [date2 timeIntervalSinceReferenceDate];
         d1.title = @"Bar";
         d1.color = [UIColor blueColor];
         d1.itemCount = 8;
         NSMutableArray *arr = [NSMutableArray array];
-        int y = rand();
-        for(NSUInteger i = 0; i < d1.itemCount - 2; ++i) {
+        for (NSUInteger i = 0; i < d1.itemCount - 2; ++i) {
             [arr addObject:@(d1.xMin + (rand() / (float)RAND_MAX) * (d1.xMax - d1.xMin))];
         }
         [arr addObject:@(d1.xMin)];
@@ -80,7 +86,7 @@
         d1.getData = ^(NSUInteger item) {
             float x = [arr[item] floatValue];
             float y = [arr2[item] floatValue];
-            NSString *label1 = [[date1 dateByAddingTimeInterval:x] dateString];
+            NSString *label1 = DateString([date1 dateByAddingTimeInterval:x]);
             NSString *label2 = [NSString stringWithFormat:@"%f", y];
             return [MRLineChartDataItem dataItemWithX:x y:y xLabel:label1 dataLabel:label2];
         };

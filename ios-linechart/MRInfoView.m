@@ -7,7 +7,6 @@
 //
 
 #import "MRInfoView.h"
-#import "UIKit+DrawingHelpers.h"
 
 
 @interface MRInfoView ()
@@ -113,7 +112,10 @@ void CGContextAddRoundedRectWithHookSimple(CGContextRef c, CGRect rect, CGFloat 
 	theRect.size.width -= 2;
 	theRect.size.height = theRect.size.height / 2 + 1;
 	CGContextSetAlpha(c, 0.2);
-    CGContextFillRoundedRect(c, theRect, 6);
+    
+    CGPathRef roundedRectPath = [UIBezierPath bezierPathWithRoundedRect:theRect cornerRadius:6.0f].CGPath;
+    CGContextAddPath(c, roundedRectPath);
+    CGContextDrawPath(c, kCGPathFill);
 }
 
 
