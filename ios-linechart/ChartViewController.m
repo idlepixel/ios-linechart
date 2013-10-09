@@ -32,9 +32,9 @@ NS_INLINE NSString *DateString(NSDate *date)
     NSDate *date1 = [currentDate dateByAddingTimeInterval:(currentTimeInterval - kTimeIntervalDay * 3.0f)];
     NSDate *date2 = [currentDate dateByAddingTimeInterval:(currentTimeInterval + kTimeIntervalDay * 2.0f)];
     
-    MRLineChartData *d1x = [MRLineChartData new];
+    MRLineChartDataSeries *d1x = [MRLineChartDataSeries new];
     {
-        MRLineChartData *d1 = d1x;
+        MRLineChartDataSeries *d1 = d1x;
         d1.xMin = [date1 timeIntervalSinceReferenceDate];
         d1.xMax = [date2 timeIntervalSinceReferenceDate];
         d1.title = @"Foobarbang";
@@ -64,9 +64,9 @@ NS_INLINE NSString *DateString(NSDate *date)
         };
     }
     
-    MRLineChartData *d2x = [MRLineChartData new];
+    MRLineChartDataSeries *d2x = [MRLineChartDataSeries new];
     {
-        MRLineChartData *d1 = d2x;
+        MRLineChartDataSeries *d1 = d2x;
         d1.xMin = [date1 timeIntervalSinceReferenceDate];
         d1.xMax = [date2 timeIntervalSinceReferenceDate];
         d1.title = @"Bar";
@@ -109,7 +109,7 @@ NS_INLINE NSString *DateString(NSDate *date)
     [self.view addSubview:chartView];
     
     {
-        MRLineChartData *d = [MRLineChartData new];
+        MRLineChartDataSeries *d = [MRLineChartDataSeries new];
         d.xMin = 1;
         d.xMax = 31;
         d.title = @"The title for the legend";

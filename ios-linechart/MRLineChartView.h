@@ -27,7 +27,7 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 
 
-@interface MRLineChartData : NSObject
+@interface MRLineChartDataSeries : NSObject
 
 @property (nonatomic, strong) UIColor *lineColor;
 @property (nonatomic, strong) UIColor *pointColor;
@@ -48,7 +48,7 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 @interface MRLineChartView : UIView
 
-@property (nonatomic, strong) NSArray *data; // Array of `LineChartData` objects, one for each line.
+@property (nonatomic, strong) NSArray *data; // Array of `MRLineChartDataSeries` objects, one for each line.
 
 @property (nonatomic, assign) float yMin;
 @property (nonatomic, assign) float yMax;

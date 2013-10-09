@@ -69,7 +69,7 @@
 
 
 
-@implementation MRLineChartData
+@implementation MRLineChartDataSeries
 
 @end
 
@@ -174,13 +174,13 @@
     if (data != _data) {
         NSMutableArray *titles = [NSMutableArray arrayWithCapacity:[data count]];
         NSMutableDictionary *colors = [NSMutableDictionary dictionaryWithCapacity:[data count]];
-        for(MRLineChartData *dat in data) {
-            if (dat.title) {
-                [titles addObject:dat.title];
-                if (dat.pointColor && !dat.pointsHidden) {
-                    [colors setObject:dat.pointColor forKey:dat.title];
-                } else if (dat.lineColor != nil && !dat.lineHidden) {
-                    [colors setObject:dat.lineColor forKey:dat.title];
+        for (MRLineChartDataSeries *series in data) {
+            if (series.title) {
+                [titles addObject:series.title];
+                if (series.pointColor && !series.pointsHidden) {
+                    [colors setObject:series.pointColor forKey:series.title];
+                } else if (series.lineColor != nil && !series.lineHidden) {
+                    [colors setObject:series.lineColor forKey:series.title];
                 }
             }
         }
@@ -248,7 +248,7 @@
     BOOL dataDrawn = NO;
     
     CGFloat yRangeLen = self.yMax - self.yMin;
-    for (MRLineChartData *data in self.data) {
+    for (MRLineChartDataSeries *data in self.data) {
         if (!data.lineHidden) {
             dataDrawn = YES;
             float xRangeLen = data.xMax - data.xMin;
@@ -321,7 +321,7 @@
     float minDistY = FLT_MAX;
     CGPoint closestPos = CGPointZero;
     
-    for (MRLineChartData *data in self.data) {
+    for (MRLineChartDataSeries *data in self.data) {
         float xRangeLen = data.xMax - data.xMin;
         for(NSUInteger i = 0; i < data.itemCount; ++i) {
             MRLineChartDataItem *datItem = data.getData(i);
