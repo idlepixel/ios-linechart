@@ -50,6 +50,8 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 @property (nonatomic, strong) NSArray *data; // Array of `MRLineChartDataSeries` objects, one for each line.
 
+@property (nonatomic, assign) BOOL yAxisLabelHidden;
+
 @property (nonatomic, assign) float yMin;
 @property (nonatomic, assign) float yMax;
 @property (nonatomic, strong) NSArray *ySteps; // Array of step names (NSString). At each step, a scale line is shown.

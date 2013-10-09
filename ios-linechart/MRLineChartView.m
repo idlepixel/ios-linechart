@@ -199,8 +199,10 @@
     
     CGFloat availableHeight = self.bounds.size.height - 2.0f * PADDING - X_AXIS_SPACE;
     
-    CGFloat availableWidth = self.bounds.size.width - 2.0f * PADDING - self.yAxisLabelsWidth;
-    CGFloat xStart = PADDING + self.yAxisLabelsWidth;
+    CGFloat yAxisLabelsWidth = [self yAxisLabelsWidth];
+    
+    CGFloat availableWidth = self.bounds.size.width - 2.0f * PADDING - yAxisLabelsWidth;
+    CGFloat xStart = PADDING + yAxisLabelsWidth;
     CGFloat yStart = PADDING;
     
     static CGFloat dashedPattern[] = {4.0f,2.0f};
@@ -214,9 +216,11 @@
     NSUInteger yCnt = [self.ySteps count];
     for (NSString *step in self.ySteps) {
         [[UIColor grayColor] set];
-        CGFloat h = [self.scaleFont lineHeight];
         CGFloat y = yStart + heightPerStep * (yCnt - 1.0f - i);
-        [step drawInRect:CGRectMake(yStart, y - h / 2.0f, self.yAxisLabelsWidth - 6.0f, h) withFont:self.scaleFont lineBreakMode:NSLineBreakByClipping alignment:NSTextAlignmentRight];
+        if (!self.yAxisLabelHidden) {
+            CGFloat h = [self.scaleFont lineHeight];
+            [step drawInRect:CGRectMake(yStart, y - h / 2.0f, yAxisLabelsWidth - 6.0f, h) withFont:self.scaleFont lineBreakMode:NSLineBreakByClipping alignment:NSTextAlignmentRight];
+        }
         
         [[UIColor colorWithWhite:0.9f alpha:1.0f] set];
         CGContextSetLineDash(c, 0.0f, dashedPattern, 2);
@@ -244,7 +248,7 @@
     }
     
     CGContextRestoreGState(c);
-
+    
     BOOL dataDrawn = NO;
     
     CGFloat yRangeLen = self.yMax - self.yMin;
@@ -307,13 +311,15 @@
         [self addSubview:self.infoView];
     }
     
+    CGFloat yAxisLabelsWidth = [self yAxisLabelsWidth];
+    
     CGPoint pos = [touch locationInView:self];
-    CGFloat xStart = PADDING + self.yAxisLabelsWidth;
+    CGFloat xStart = PADDING + yAxisLabelsWidth;
     CGFloat yStart = PADDING;
     CGFloat yRangeLen = self.yMax - self.yMin;
     CGFloat xPos = pos.x - xStart;
     CGFloat yPos = pos.y - yStart;
-    CGFloat availableWidth = self.bounds.size.width - 2.0f * PADDING - self.yAxisLabelsWidth;
+    CGFloat availableWidth = self.bounds.size.width - 2.0f * PADDING - yAxisLabelsWidth;
     CGFloat availableHeight = self.bounds.size.height - 2.0f * PADDING - X_AXIS_SPACE;
     
     MRLineChartDataItem *closest = nil;
@@ -405,12 +411,16 @@
 // TODO: This should really be a cached value. Invalidated iff ySteps changes.
 - (CGFloat)yAxisLabelsWidth
 {
-    NSNumber *requiredWidth = [[self.ySteps mapWithBlock:^id(id obj) {
-        NSString *label = (NSString*)obj;
-        CGSize labelSize = [label sizeWithFont:self.scaleFont];
-        return @(labelSize.width); // Literal NSNumber Conversion
-    }] valueForKeyPath:@"@max.self"]; // gets biggest object. Yeah, NSKeyValueCoding. Deal with it.
-    return [requiredWidth floatValue] + PADDING;
+    if (self.yAxisLabelHidden) {
+        return 0.0f;
+    } else {
+        NSNumber *requiredWidth = [[self.ySteps mapWithBlock:^id(id obj) {
+            NSString *label = (NSString*)obj;
+            CGSize labelSize = [label sizeWithFont:self.scaleFont];
+            return @(labelSize.width); // Literal NSNumber Conversion
+        }] valueForKeyPath:@"@max.self"]; // gets biggest object. Yeah, NSKeyValueCoding. Deal with it.
+        return [requiredWidth floatValue] + PADDING;
+    }
 }
 
 @end
