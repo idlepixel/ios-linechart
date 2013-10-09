@@ -31,11 +31,17 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 @property (nonatomic, strong) UIColor *lineColor;
 @property (nonatomic, strong) UIColor *pointColor;
+@property (nonatomic, assign) CGFloat pointRadius;
+@property (nonatomic, assign) CGFloat pointLineWidth;
+
+@property (nonatomic, assign) CGFloat lineWidth;
+
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, assign) NSUInteger itemCount;
 
 @property (nonatomic, assign) BOOL pointsHidden; // Switch to turn off circles on data points.
 @property (nonatomic, assign) BOOL lineHidden; // Switch to turn off lines connecting data points.
+
 
 @property (nonatomic, assign) float xMin;
 @property (nonatomic, assign) float xMax;
@@ -47,6 +53,14 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 
 @interface MRLineChartView : UIView
+
+@property (nonatomic,retain) UIColor *gridLineColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic,retain) UIColor *currentPositionColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic,retain) UIColor *xAxisLabelColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic,retain) UIColor *yAxisLabelColor UI_APPEARANCE_SELECTOR;
+
+@property (nonatomic,assign) CGFloat currentPositionWidth UI_APPEARANCE_SELECTOR;
+@property (nonatomic,assign) CGFloat gridLineWidth UI_APPEARANCE_SELECTOR;
 
 @property (nonatomic, strong) NSArray *data; // Array of `MRLineChartDataSeries` objects, one for each line.
 
