@@ -61,6 +61,8 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 @property (nonatomic,assign) CGFloat currentPositionWidth UI_APPEARANCE_SELECTOR;
 @property (nonatomic,assign) CGFloat gridLineWidth UI_APPEARANCE_SELECTOR;
+@property (nonatomic,assign) CGFloat gridDashOnLength UI_APPEARANCE_SELECTOR;
+@property (nonatomic,assign) CGFloat gridDashOffLength UI_APPEARANCE_SELECTOR;
 
 @property (nonatomic, strong) NSArray *data; // Array of `MRLineChartDataSeries` objects, one for each line.
 

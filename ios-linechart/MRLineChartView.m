@@ -129,6 +129,8 @@
     self.currentPositionColor = [UIColor colorWithRed:0.7f green:0.0f blue:0.0f alpha:1.0f];
     
     self.gridLineWidth = 1.0f;
+    self.gridDashOnLength = 4.0f;
+    self.gridDashOffLength = 2.0f;
     
     self.currentPosView = [[UIView alloc] initWithFrame:CGRectMake(PADDING, PADDING, 4.0f, 50.0f)];
     self.currentPosView.backgroundColor = self.currentPositionColor;
@@ -228,7 +230,7 @@
     CGFloat xStart = PADDING + yAxisLabelsWidth;
     CGFloat yStart = PADDING;
     
-    static CGFloat dashedPattern[] = {4.0f,2.0f};
+    CGFloat dashedPattern[] = {self.gridDashOnLength,self.gridDashOffLength};
     
     // draw scale and horizontal lines
     CGFloat heightPerStep = self.ySteps == nil || [self.ySteps count] == 0 ? availableHeight : (availableHeight / ([self.ySteps count] - 1));
@@ -498,6 +500,22 @@
 {
     if (_gridLineWidth != gridLineWidth) {
         _gridLineWidth = gridLineWidth;
+        [self setNeedsDisplay];
+    }
+}
+
+-(void)setGridDashOnLength:(CGFloat)gridDashOnLength
+{
+    if (_gridDashOnLength != gridDashOnLength) {
+        _gridDashOnLength = gridDashOnLength;
+        [self setNeedsDisplay];
+    }
+}
+
+-(void)setGridDashOffLength:(CGFloat)gridDashOffLength
+{
+    if (_gridDashOffLength != gridDashOffLength) {
+        _gridDashOffLength = gridDashOffLength;
         [self setNeedsDisplay];
     }
 }
