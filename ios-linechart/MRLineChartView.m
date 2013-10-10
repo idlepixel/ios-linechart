@@ -467,8 +467,6 @@
     
     self.chartFrameBaked = YES;
     
-    CGRect chartFrame = self.chartFrame;
-    
     CGPoint touchPosition = [touch locationInView:self];
     
     MRLineChartDataSeries *closestSeries = nil;
