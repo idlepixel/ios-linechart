@@ -104,7 +104,7 @@
 
 @property (nonatomic, strong) MRLegendView *legendView;
 @property (nonatomic, strong) MRInfoView *infoView;
-@property (nonatomic, strong) UIView *currentPosView;
+@property (nonatomic, strong) UIView *currentPositionView;
 @property (nonatomic, strong) UILabel *xAxisLabel;
 
 @property (nonatomic, strong) MRLineChartDataSeries *lastSelectedDataSeries;
@@ -146,11 +146,11 @@
     self.gridDashOnLength = 4.0f;
     self.gridDashOffLength = 2.0f;
     
-    self.currentPosView = [[UIView alloc] initWithFrame:CGRectMake(PADDING, PADDING, 4.0f, 50.0f)];
-    self.currentPosView.backgroundColor = self.currentPositionColor;
-    self.currentPosView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-    self.currentPosView.alpha = 0.0;
-    [self addSubview:self.currentPosView];
+    self.currentPositionView = [[UIView alloc] initWithFrame:CGRectMake(PADDING, PADDING, 4.0f, 50.0f)];
+    self.currentPositionView.backgroundColor = self.currentPositionColor;
+    self.currentPositionView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+    self.currentPositionView.alpha = 0.0;
+    [self addSubview:self.currentPositionView];
     
     self.currentPositionWidth = 1.0f;
     
@@ -175,34 +175,85 @@
     self.contentMode = UIViewContentModeRedraw;
 }
 
-- (void)showLegend:(BOOL)show animated:(BOOL)animated
+- (void)setView:(UIView *)view hidden:(BOOL)hidden animated:(BOOL)animated
 {
-    if (!animated) {
-        self.legendView.alpha = show ? 1.0f : 0.0f;
-        return;
-    }
+    if (view == nil) return;
     
-    [UIView animateWithDuration:0.3 animations:^{
-        self.legendView.alpha = show ? 1.0f : 0.0f;
-    }];
+    if (!animated) {
+        view.hidden = hidden;
+    } else {
+        if (!hidden && view.hidden) {
+            view.alpha = 0.0f;
+            view.hidden = NO;
+        }
+        [UIView animateWithDuration:0.3f animations:^{
+            view.alpha = hidden ? 0.0f : 1.0f;
+        } completion:^(BOOL finished){
+            if (hidden) view.hidden = YES;
+        }];
+    }
 }
-                           
+
+- (void)setLegendHidden:(BOOL)hidden
+{
+    [self setLegendHidden:hidden animated:NO];
+}
+
+- (void)setLegendHidden:(BOOL)hidden animated:(BOOL)animated
+{
+    _legendHidden = hidden;
+    [self setView:self.legendView hidden:hidden animated:animated];
+}
+
+- (void)setCurrentPositionHidden:(BOOL)hidden
+{
+    [self setCurrentPositionHidden:hidden animated:NO];
+}
+
+- (void)setCurrentPositionHidden:(BOOL)hidden animated:(BOOL)animated
+{
+    _currentPositionHidden = hidden;
+    [self setView:self.currentPositionView hidden:hidden animated:animated];
+}
+
+- (void)setInfoHidden:(BOOL)hidden
+{
+    [self setInfoHidden:hidden animated:NO];
+}
+
+- (void)setInfoHidden:(BOOL)hidden animated:(BOOL)animated
+{
+    _infoHidden = hidden;
+    [self setView:self.infoView hidden:hidden animated:animated];
+}
+
+- (void)setXAxisLabelHidden:(BOOL)hidden
+{
+    _xAxisLabelHidden = hidden;
+    if (!hidden && self.xAxisLabel.hidden) {
+        self.xAxisLabel.alpha = 0.0f;
+    }
+    self.xAxisLabel.hidden = hidden;
+}
+
 - (void)layoutSubviews
 {
+    CGFloat xAxisLabelHeight = [self xAxisLabelHeight];
+    
     [self.legendView sizeToFit];
     CGRect r = self.legendView.frame;
     r.origin.x = self.frame.size.width - self.legendView.frame.size.width - 3.0f - PADDING;
     r.origin.y = 3.0f + PADDING;
     self.legendView.frame = r;
     
-    r = self.currentPosView.frame;
+    r = self.currentPositionView.frame;
     CGFloat h = self.frame.size.height;
-    r.size.height = h - 2.0f * PADDING - X_AXIS_SPACE;
-    self.currentPosView.frame = r;
+    r.size.height = h - 2.0f * PADDING - xAxisLabelHeight;
+    self.currentPositionView.frame = r;
     
     [self.xAxisLabel sizeToFit];
     r = self.xAxisLabel.frame;
-    r.origin.y = self.frame.size.height - X_AXIS_SPACE - PADDING + 2.0f;
+    r.origin.y = self.frame.size.height - xAxisLabelHeight - PADDING + 2.0f;
     self.xAxisLabel.frame = r;
     
     [self bringSubviewToFront:self.legendView];
@@ -236,9 +287,9 @@
     
     CGContextRef c = UIGraphicsGetCurrentContext();
     
-    CGFloat availableHeight = self.bounds.size.height - 2.0f * PADDING - X_AXIS_SPACE;
-    
     CGFloat yAxisLabelsWidth = [self yAxisLabelsWidth];
+    
+    CGFloat availableHeight = self.bounds.size.height - 2.0f * PADDING - [self xAxisLabelHeight];
     
     CGFloat availableWidth = self.bounds.size.width - 2.0f * PADDING - yAxisLabelsWidth;
     CGFloat xStart = PADDING + yAxisLabelsWidth;
@@ -380,9 +431,10 @@
 
 - (void)showIndicatorForTouch:(UITouch *)touch
 {
-    if (! self.infoView) {
+    if (!self.infoView) {
         self.infoView = [[MRInfoView alloc] init];
         [self addSubview:self.infoView];
+        self.infoHidden = self.infoHidden;
     }
     
     CGFloat yAxisLabelsWidth = [self yAxisLabelsWidth];
@@ -394,7 +446,7 @@
     CGFloat xPos = pos.x - xStart;
     CGFloat yPos = pos.y - yStart;
     CGFloat availableWidth = self.bounds.size.width - 2.0f * PADDING - yAxisLabelsWidth;
-    CGFloat availableHeight = self.bounds.size.height - 2.0f * PADDING - X_AXIS_SPACE;
+    CGFloat availableHeight = self.bounds.size.height - 2.0f * PADDING - [self xAxisLabelHeight];
     
     MRLineChartDataSeries *closestSeries = nil;
     MRLineChartDataItem *closestItem = nil;
@@ -431,27 +483,31 @@
     [self.infoView setNeedsLayout];
     [self.infoView setNeedsDisplay];
     
-    if (self.currentPosView.alpha == 0.0f) {
-        CGRect r = self.currentPosView.frame;
+    if (self.currentPositionView.alpha == 0.0f) {
+        CGRect r = self.currentPositionView.frame;
         r.origin.x = closestPos.x + 3.0f - 1.0f;
-        self.currentPosView.frame = r;
+        self.currentPositionView.frame = r;
     }
+    
+    
     
     [UIView animateWithDuration:0.1f animations:^{
         self.infoView.alpha = 1.0f;
-        self.currentPosView.alpha = 1.0f;
+        self.currentPositionView.alpha = 1.0f;
         self.xAxisLabel.alpha = 1.0f;
         
-        CGRect r = self.currentPosView.frame;
+        CGRect r = self.currentPositionView.frame;
         r.origin.x = closestPos.x + 3.0f - 1.0f;
-        self.currentPosView.frame = r;
+        self.currentPositionView.frame = r;
         
-        self.xAxisLabel.text = closestItem.xLabel;
-        if(self.xAxisLabel.text != nil) {
-            [self.xAxisLabel sizeToFit];
-            r = self.xAxisLabel.frame;
-            r.origin.x = round(closestPos.x - r.size.width / 2.0f);
-            self.xAxisLabel.frame = r;
+        if (!self.xAxisLabelHidden) {
+            self.xAxisLabel.text = closestItem.xLabel;
+            if(self.xAxisLabel.text != nil) {
+                [self.xAxisLabel sizeToFit];
+                r = self.xAxisLabel.frame;
+                r.origin.x = round(closestPos.x - r.size.width / 2.0f);
+                self.xAxisLabel.frame = r;
+            }
         }
     }];
 }
@@ -462,7 +518,7 @@
     
     [UIView animateWithDuration:0.1f animations:^{
         self.infoView.alpha = 0.0f;
-        self.currentPosView.alpha = 0.0f;
+        self.currentPositionView.alpha = 0.0f;
         self.xAxisLabel.alpha = 0.0f;
     }];
 }
@@ -505,6 +561,15 @@
     }
 }
 
+- (CGFloat)xAxisLabelHeight
+{
+    if (self.xAxisLabelHidden) {
+        return 0.0f;
+    } else {
+        return X_AXIS_SPACE;
+    }
+}
+
 #pragma mark - Appearance
 
 -(void)setGridLineColor:(UIColor *)gridLineColor
@@ -519,7 +584,7 @@
 {
     if (_currentPositionColor == nil || [_currentPositionColor isEqual:currentPositionColor]) {
         _currentPositionColor = currentPositionColor;
-        self.currentPosView.backgroundColor = currentPositionColor;
+        self.currentPositionView.backgroundColor = currentPositionColor;
     }
 }
 
@@ -567,10 +632,10 @@
 {
     if (_currentPositionWidth != currentPositionWidth) {
         _currentPositionWidth = currentPositionWidth;
-        CGRect frame = self.currentPosView.frame;
+        CGRect frame = self.currentPositionView.frame;
         CGFloat widthDelta = (CGRectGetWidth(frame) - currentPositionWidth)/2.0f;
         frame = CGRectInset(frame, widthDelta, 0.0f);
-        self.currentPosView.frame = frame;
+        self.currentPositionView.frame = frame;
     }
 }
 

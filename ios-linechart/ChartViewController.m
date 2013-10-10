@@ -136,11 +136,16 @@ NS_INLINE NSString *DateString(NSDate *date)
         MRLineChartView *chartView = [[MRLineChartView alloc] initWithFrame:CGRectMake(20, 700, 500, 300)];
         chartView.yMin = 0;
         chartView.yMax = powf(2, 31 / 7) + 0.5;
+        chartView.yAxisLabelHidden = YES;
         chartView.ySteps = @[@"0.0",
                              [NSString stringWithFormat:@"%.02f", chartView.yMax / 2],
                              [NSString stringWithFormat:@"%.02f", chartView.yMax]];
         chartView.xStepsCount = 5;
         chartView.data = @[d];
+        chartView.infoHidden = YES;
+        chartView.currentPositionHidden = NO;
+        chartView.legendHidden = YES;
+        chartView.xAxisLabelHidden = YES;
         chartView.delegate = self;
         
         [self.view addSubview:chartView];

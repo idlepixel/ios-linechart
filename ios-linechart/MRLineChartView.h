@@ -78,6 +78,7 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 @property (nonatomic, strong) NSArray *data; // Array of `MRLineChartDataSeries` objects, one for each line.
 
+@property (nonatomic, assign) BOOL xAxisLabelHidden;
 @property (nonatomic, assign) BOOL yAxisLabelHidden;
 
 @property (nonatomic, assign) float yMin;
@@ -87,6 +88,12 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 @property (nonatomic, strong) UIFont *scaleFont; // Font in which scale markings are drawn. Defaults to [UIFont systemFontOfSize:10].
 
-- (void)showLegend:(BOOL)show animated:(BOOL)animated;
+@property (nonatomic, assign) BOOL legendHidden;
+@property (nonatomic, assign) BOOL currentPositionHidden;
+@property (nonatomic, assign) BOOL infoHidden;
+
+- (void)setLegendHidden:(BOOL)hidden animated:(BOOL)animated;
+- (void)setCurrentPositionHidden:(BOOL)hidden animated:(BOOL)animated;
+- (void)setInfoHidden:(BOOL)hidden animated:(BOOL)animated;
 
 @end
