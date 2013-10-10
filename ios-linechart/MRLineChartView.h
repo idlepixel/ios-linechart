@@ -16,6 +16,7 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 @interface MRLineChartDataItem : NSObject
 
+@property (nonatomic, assign, readonly) NSUInteger index;
 @property (nonatomic, assign, readonly) float x; // should be within the x range
 @property (nonatomic, assign, readonly) float y; // should be within the y range
 @property (nonatomic, strong, readonly) NSString *xLabel; // label to be shown on the x axis
