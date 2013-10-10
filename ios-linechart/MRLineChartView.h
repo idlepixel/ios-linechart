@@ -78,6 +78,10 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
 @property (nonatomic, strong) NSArray *data; // Array of `MRLineChartDataSeries` objects, one for each line.
 
+@property (nonatomic, assign, readonly) CGRect chartFrame;
+
+- (CGPoint)convertDataItemPopositionToViewPosition:(CGPoint)point forDataSeries:(MRLineChartDataSeries *)dataSeries;
+
 @property (nonatomic, assign) BOOL xAxisLabelHidden;
 @property (nonatomic, assign) BOOL yAxisLabelHidden;
 

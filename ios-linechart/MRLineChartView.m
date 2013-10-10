@@ -70,6 +70,11 @@
 
 @end
 
+@interface MRLineChartDataSeries ()
+
+@property (nonatomic, assign) CGFloat xRange;
+
+@end
 
 
 @implementation MRLineChartDataSeries
@@ -96,6 +101,18 @@
     }
 }
 
+-(void)setXMin:(CGFloat)xMin
+{
+    _xMin = xMin;
+    self.xRange = self.xMax - xMin;
+}
+
+-(void)setXMax:(CGFloat)xMax
+{
+    _xMax = xMax;
+    self.xRange = xMax - self.xMin;
+}
+
 @end
 
 
@@ -110,6 +127,13 @@
 @property (nonatomic, strong) MRLineChartDataSeries *lastSelectedDataSeries;
 @property (nonatomic, assign) NSUInteger lastSelectedDataItemIndex;
 
+@property (readonly) CGFloat xAxisLabelHeight;
+@property (nonatomic, assign) CGFloat yAxisLabelWidth;
+
+@property (nonatomic, assign) CGFloat yRange;
+
+@property (nonatomic, assign) BOOL chartFrameBaked;
+
 @end
 
 
@@ -118,6 +142,7 @@
 
 
 @implementation MRLineChartView
+@synthesize chartFrame=_chartFrame;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -262,6 +287,11 @@
 - (void)setData:(NSArray *)data
 {
     if (data != _data) {
+        if (data.count > 0) {
+            data = [NSArray arrayWithArray:data];
+        } else {
+            data = nil;
+        }
         NSMutableArray *titles = [NSMutableArray arrayWithCapacity:[data count]];
         NSMutableDictionary *colors = [NSMutableDictionary dictionaryWithCapacity:[data count]];
         for (MRLineChartDataSeries *series in data) {
@@ -278,6 +308,8 @@
         self.legendView.colors = colors;
         
         _data = data;
+        
+        [self calculateLabelDimensions];
     }
 }
 
@@ -287,37 +319,33 @@
     
     CGContextRef c = UIGraphicsGetCurrentContext();
     
-    CGFloat yAxisLabelsWidth = [self yAxisLabelsWidth];
+    self.chartFrameBaked = YES;
     
-    CGFloat availableHeight = self.bounds.size.height - 2.0f * PADDING - [self xAxisLabelHeight];
-    
-    CGFloat availableWidth = self.bounds.size.width - 2.0f * PADDING - yAxisLabelsWidth;
-    CGFloat xStart = PADDING + yAxisLabelsWidth;
-    CGFloat yStart = PADDING;
+    CGRect chartFrame = self.chartFrame;
     
     CGFloat dashedPattern[] = {self.gridDashOnLength,self.gridDashOffLength};
     
     // draw scale and horizontal lines
-    CGFloat heightPerStep = self.ySteps == nil || [self.ySteps count] == 0 ? availableHeight : (availableHeight / ([self.ySteps count] - 1));
+    CGFloat heightPerStep = self.ySteps == nil || [self.ySteps count] == 0 ? chartFrame.size.height : (chartFrame.size.height / ([self.ySteps count] - 1));
     
     NSUInteger i = 0;
     CGContextSaveGState(c);
     CGContextSetLineWidth(c, self.gridLineWidth);
     NSUInteger yCnt = [self.ySteps count];
     for (NSString *step in self.ySteps) {
-        CGFloat y = yStart + heightPerStep * (yCnt - 1.0f - i);
+        CGFloat y = chartFrame.origin.y + heightPerStep * (yCnt - 1.0f - i);
         if (!self.yAxisLabelHidden) {
             if (self.yAxisLabelColor) {
                 [self.yAxisLabelColor set];
                 CGFloat h = [self.scaleFont lineHeight];
-                [step drawInRect:CGRectMake(yStart, y - h / 2.0f, yAxisLabelsWidth - 6.0f, h) withFont:self.scaleFont lineBreakMode:NSLineBreakByClipping alignment:NSTextAlignmentRight];
+                [step drawInRect:CGRectMake(PADDING, y - h / 2.0f, chartFrame.origin.x - 6.0f, h) withFont:self.scaleFont lineBreakMode:NSLineBreakByClipping alignment:NSTextAlignmentRight];
             }
         }
         
         if (self.gridLineColor) {
             [self.gridLineColor set];
             CGContextSetLineDash(c, 0.0f, dashedPattern, 2);
-            CGContextMoveToPoint(c, xStart, round(y) + 0.5f);
+            CGContextMoveToPoint(c, chartFrame.origin.y, round(y) + 0.5f);
             CGContextAddLineToPoint(c, self.bounds.size.width - PADDING, round(y) + 0.5f);
             CGContextStrokePath(c);
         }
@@ -326,16 +354,16 @@
     
     NSUInteger xCnt = self.xStepsCount;
     if (xCnt > 1) {
-        CGFloat widthPerStep = availableWidth / (xCnt - 1.0f);
+        CGFloat widthPerStep = chartFrame.size.width / (xCnt - 1.0f);
         
         for (NSUInteger i = 0; i < xCnt; ++i) {
             NSLog(@"i: %d x: %d", i, xCnt);
-            CGFloat x = xStart + widthPerStep * (xCnt - 1.0f - (CGFloat)i);
+            CGFloat x = chartFrame.origin.x + widthPerStep * (xCnt - 1.0f - (CGFloat)i);
             
             if (self.gridLineColor) {
                 [self.gridLineColor set];
                 CGContextMoveToPoint(c, round(x) + 0.5f, PADDING);
-                CGContextAddLineToPoint(c, round(x) + 0.5f, yStart + availableHeight);
+                CGContextAddLineToPoint(c, round(x) + 0.5f, chartFrame.origin.y + chartFrame.size.height);
                 CGContextStrokePath(c);
             }
         }
@@ -345,24 +373,21 @@
     
     BOOL dataDrawn = NO;
     
-    CGFloat yRangeLen = self.yMax - self.yMin;
     for (MRLineChartDataSeries *dataSeries in self.data) {
         // draw chart lines
         if (!dataSeries.lineHidden) {
             dataDrawn = YES;
-            CGFloat xRangeLen = dataSeries.xMax - dataSeries.xMin;
             if(dataSeries.itemCount >= 2) {
                 MRLineChartDataItem *dataItem = [dataSeries dataItemAtIndex:0];
                 
+                CGPoint position = [self convertDataItemPopositionToViewPosition:dataItem.position forDataSeries:dataSeries];
+                
                 CGMutablePathRef path = CGPathCreateMutable();
-                CGPathMoveToPoint(path, NULL,
-                                  xStart + round(((dataItem.position.x - dataSeries.xMin) / xRangeLen) * availableWidth),
-                                  yStart + round((1.0f - (dataItem.position.y - self.yMin) / yRangeLen) * availableHeight));
+                CGPathMoveToPoint(path, NULL, position.x, position.y);
                 for(NSUInteger i = 1; i < dataSeries.itemCount; ++i) {
                     dataItem = [dataSeries dataItemAtIndex:i];
-                    CGPathAddLineToPoint(path, NULL,
-                                         xStart + round(((dataItem.position.x - dataSeries.xMin) / xRangeLen) * availableWidth),
-                                         yStart + round((1.0f - (dataItem.position.y - self.yMin) / yRangeLen) * availableHeight));
+                    position = [self convertDataItemPopositionToViewPosition:dataItem.position forDataSeries:dataSeries];
+                    CGPathAddLineToPoint(path, NULL, position.x, position.y);
                 }
                 
                 CGContextAddPath(c, path);
@@ -381,7 +406,6 @@
         // draw chart points
         if (!dataSeries.pointsHidden) {
             dataDrawn = YES;
-            CGFloat xRangeLen = dataSeries.xMax - dataSeries.xMin;
             
             CGFloat outerRadius = dataSeries.pointRadius;
             CGFloat innerRadius = MAX(outerRadius - dataSeries.pointLineWidth, 0.0f);
@@ -389,20 +413,24 @@
             CGFloat outerDiameter = outerRadius * 2.0f;
             CGFloat innerDiameter = innerRadius * 2.0f;
             CGFloat padDiameter = padRadius * 2.0f;
+            
+            CGPoint position;
+            
             MRLineChartDataItem *dataItem = nil;
             for(NSUInteger i = 0; i < dataSeries.itemCount; ++i) {
                 dataItem = [dataSeries dataItemAtIndex:i];
-                CGFloat xVal = xStart + round((xRangeLen == 0.0f ? 0.5f : ((dataItem.position.x - dataSeries.xMin) / xRangeLen)) * availableWidth);
-                CGFloat yVal = yStart + round((1.0f - (dataItem.position.y - self.yMin) / yRangeLen) * availableHeight);
+                position = [self convertDataItemPopositionToViewPosition:dataItem.position forDataSeries:dataSeries];
                 [self.backgroundColor setFill];
-                CGContextFillEllipseInRect(c, CGRectMake(xVal - padRadius, yVal - padRadius, padDiameter, padDiameter));
+                CGContextFillEllipseInRect(c, CGRectMake(position.x - padRadius, position.y - padRadius, padDiameter, padDiameter));
                 [dataSeries.pointColor setFill];
-                CGContextFillEllipseInRect(c, CGRectMake(xVal - outerRadius, yVal - outerRadius, outerDiameter, outerDiameter));
+                CGContextFillEllipseInRect(c, CGRectMake(position.x - outerRadius, position.y - outerRadius, outerDiameter, outerDiameter));
                 [self.backgroundColor setFill];
-                CGContextFillEllipseInRect(c, CGRectMake(xVal - innerRadius, yVal - innerRadius, innerDiameter, innerDiameter));
+                CGContextFillEllipseInRect(c, CGRectMake(position.x - innerRadius, position.y - innerRadius, innerDiameter, innerDiameter));
             } // for
         } // draw data points
     }
+    
+    self.chartFrameBaked = NO;
     
     if (!dataDrawn) {
         NSLog(@"You configured LineChartView to draw neither lines nor data points. No data will be visible. This is most likely not what you wanted. (But we aren't judging you, so here's your chart background.)");
@@ -437,43 +465,42 @@
         self.infoHidden = self.infoHidden;
     }
     
-    CGFloat yAxisLabelsWidth = [self yAxisLabelsWidth];
+    self.chartFrameBaked = YES;
     
-    CGPoint pos = [touch locationInView:self];
-    CGFloat xStart = PADDING + yAxisLabelsWidth;
-    CGFloat yStart = PADDING;
-    CGFloat yRangeLen = self.yMax - self.yMin;
-    CGFloat xPos = pos.x - xStart;
-    CGFloat yPos = pos.y - yStart;
-    CGFloat availableWidth = self.bounds.size.width - 2.0f * PADDING - yAxisLabelsWidth;
-    CGFloat availableHeight = self.bounds.size.height - 2.0f * PADDING - [self xAxisLabelHeight];
+    CGRect chartFrame = self.chartFrame;
+    
+    CGPoint touchPosition = [touch locationInView:self];
+    touchPosition.x = touchPosition.x - chartFrame.origin.x;
+    touchPosition.y = touchPosition.y - chartFrame.origin.y;
     
     MRLineChartDataSeries *closestSeries = nil;
     MRLineChartDataItem *closestItem = nil;
     CGPoint minimumDistance = CGPointMake(CGFLOAT_MAX, CGFLOAT_MAX);
     CGPoint closestPos = CGPointZero;
     
+    CGPoint dataItemPosition;
     CGPoint distance = CGPointZero;
     MRLineChartDataItem *dataItem = nil;
     
     for (MRLineChartDataSeries *dataSeries in self.data) {
-        CGFloat xRangeLen = dataSeries.xMax - dataSeries.xMin;
         for (NSUInteger i = 0; i < dataSeries.itemCount; ++i) {
             dataItem = [dataSeries dataItemAtIndex:i];
-            CGFloat xVal = round((xRangeLen == 0.0f ? 0.5f : ((dataItem.position.x - dataSeries.xMin) / xRangeLen)) * availableWidth);
-            CGFloat yVal = round((1.0f - (dataItem.position.y - self.yMin) / yRangeLen) * availableHeight);
             
-            distance.x = fabsf(xVal - xPos);
-            distance.y = fabsf(yVal - yPos);
+            dataItemPosition = [self convertDataItemPopositionToViewPosition:dataItem.position forDataSeries:dataSeries];
+            
+            distance.x = fabsf(dataItemPosition.x - touchPosition.x);
+            distance.y = fabsf(dataItemPosition.y - touchPosition.y);
             if (distance.x < minimumDistance.x || (distance.x == minimumDistance.x && distance.y < minimumDistance.y)) {
                 minimumDistance.x = distance.x;
                 minimumDistance.y = distance.y;
                 closestItem = dataItem;
                 closestSeries = dataSeries;
-                closestPos = CGPointMake(xStart + xVal - 3.0f, yStart + yVal - 7.0f);
+                closestPos = CGPointMake(dataItemPosition.x - 3.0f, dataItemPosition.y - 7.0f);
             }
         }
     }
+    
+    self.chartFrameBaked = NO;
     
     [self notifyDelegateOfSelectedItem:closestItem inSeries:closestSeries];
     
@@ -488,8 +515,6 @@
         r.origin.x = closestPos.x + 3.0f - 1.0f;
         self.currentPositionView.frame = r;
     }
-    
-    
     
     [UIView animateWithDuration:0.1f animations:^{
         self.infoView.alpha = 1.0f;
@@ -543,21 +568,24 @@
     [self hideIndicator];
 }
 
-
 #pragma mark Helper methods
 
-// TODO: This should really be a cached value. Invalidated iff ySteps changes.
+- (void)calculateLabelDimensions
+{
+    NSNumber *requiredWidth = [[self.ySteps mapWithBlock:^id(id obj) {
+        NSString *label = (NSString*)obj;
+        CGSize labelSize = [label sizeWithFont:self.scaleFont];
+        return @(labelSize.width); // Literal NSNumber Conversion
+    }] valueForKeyPath:@"@max.self"]; // gets biggest object. Yeah, NSKeyValueCoding. Deal with it.
+    _yAxisLabelWidth = [requiredWidth floatValue] + PADDING;
+}
+
 - (CGFloat)yAxisLabelsWidth
 {
     if (self.yAxisLabelHidden) {
         return 0.0f;
     } else {
-        NSNumber *requiredWidth = [[self.ySteps mapWithBlock:^id(id obj) {
-            NSString *label = (NSString*)obj;
-            CGSize labelSize = [label sizeWithFont:self.scaleFont];
-            return @(labelSize.width); // Literal NSNumber Conversion
-        }] valueForKeyPath:@"@max.self"]; // gets biggest object. Yeah, NSKeyValueCoding. Deal with it.
-        return [requiredWidth floatValue] + PADDING;
+        return _yAxisLabelWidth;
     }
 }
 
@@ -568,6 +596,49 @@
     } else {
         return X_AXIS_SPACE;
     }
+}
+
+-(void)setYMin:(CGFloat)yMin
+{
+    _yMin = yMin;
+    self.yRange = self.yMax - yMin;
+}
+
+-(void)setYMax:(CGFloat)yMax
+{
+    _yMax = yMax;
+    self.yRange = yMax - self.yMin;
+}
+
+- (CGRect)chartFrame
+{
+    if (!self.chartFrameBaked) {
+        CGRect frame = self.bounds;
+        frame.origin.x = PADDING + [self yAxisLabelsWidth];
+        frame.origin.y = PADDING;
+        frame.size.width = frame.size.width - (PADDING * 2.0f + [self yAxisLabelsWidth]);
+        frame.size.height = frame.size.height - (PADDING * 2.0f + [self xAxisLabelHeight]);
+        _chartFrame = frame;
+    }
+    return _chartFrame;
+}
+
+- (void)setChartFrameBaked:(BOOL)chartFrameBaked
+{
+    if (chartFrameBaked) {
+        _chartFrameBaked = NO;
+        [self chartFrame];
+    }
+    _chartFrameBaked = chartFrameBaked;
+}
+
+- (CGPoint)convertDataItemPopositionToViewPosition:(CGPoint)point forDataSeries:(MRLineChartDataSeries *)dataSeries
+{
+    CGPoint result = CGPointZero;
+    CGRect chartFrame = self.chartFrame;
+    result.x = round(chartFrame.origin.x + (dataSeries.xRange == 0.0f ? 0.5f : ((point.x - dataSeries.xMin) / dataSeries.xRange)) * CGRectGetWidth(chartFrame));
+    result.y = round(chartFrame.origin.y + (1.0f - (point.y - self.yMin) / self.yRange) * CGRectGetHeight(chartFrame));
+    return result;
 }
 
 #pragma mark - Appearance
