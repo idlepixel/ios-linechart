@@ -338,15 +338,15 @@
             if (self.yAxisLabelColor) {
                 [self.yAxisLabelColor set];
                 CGFloat h = [self.scaleFont lineHeight];
-                [step drawInRect:CGRectMake(PADDING, y - h / 2.0f, chartFrame.origin.x - 6.0f, h) withFont:self.scaleFont lineBreakMode:NSLineBreakByClipping alignment:NSTextAlignmentRight];
+                [step drawInRect:CGRectMake(PADDING, y - h / 2.0f, chartFrame.origin.x - PADDING * 2.0f, h) withFont:self.scaleFont lineBreakMode:NSLineBreakByClipping alignment:NSTextAlignmentRight];
             }
         }
         
         if (self.gridLineColor) {
             [self.gridLineColor set];
             CGContextSetLineDash(c, 0.0f, dashedPattern, 2);
-            CGContextMoveToPoint(c, chartFrame.origin.y, round(y) + 0.5f);
-            CGContextAddLineToPoint(c, self.bounds.size.width - PADDING, round(y) + 0.5f);
+            CGContextMoveToPoint(c, chartFrame.origin.x, round(y) + 0.5f);
+            CGContextAddLineToPoint(c, CGRectGetMaxX(chartFrame), round(y) + 0.5f);
             CGContextStrokePath(c);
         }
         i++;
@@ -470,8 +470,6 @@
     CGRect chartFrame = self.chartFrame;
     
     CGPoint touchPosition = [touch locationInView:self];
-    touchPosition.x = touchPosition.x - chartFrame.origin.x;
-    touchPosition.y = touchPosition.y - chartFrame.origin.y;
     
     MRLineChartDataSeries *closestSeries = nil;
     MRLineChartDataItem *closestItem = nil;
