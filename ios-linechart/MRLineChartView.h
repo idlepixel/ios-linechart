@@ -30,6 +30,7 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 @property (nonatomic, assign, readonly) CGPoint position; // should be within the x & y ranges
 @property (nonatomic, strong, readonly) NSString *xLabel; // label to be shown on the x axis
 @property (nonatomic, strong, readonly) NSString *dataLabel; // label to be shown directly at the data item
+@property (nonatomic, strong) NSObject *data;
 
 + (MRLineChartDataItem *)dataItemWithPosition:(CGPoint)position xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel;
 
