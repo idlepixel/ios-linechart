@@ -53,6 +53,7 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 @property (nonatomic, assign) BOOL pointsHidden; // Switch to turn off circles on data points.
 @property (nonatomic, assign) BOOL lineHidden; // Switch to turn off lines connecting data points.
 
+@property (nonatomic, assign) BOOL selectable;
 
 @property (nonatomic, assign) CGFloat xMin;
 @property (nonatomic, assign) CGFloat xMax;
