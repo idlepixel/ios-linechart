@@ -59,6 +59,7 @@
         self.xLabel = xLabel;
         self.dataLabel = dataLabel;
         self.index = NSNotFound;
+        self.selectable = YES;
     }
     return self;
 }
@@ -483,17 +484,19 @@
         if (dataSeries.selectable) {
             for (NSUInteger i = 0; i < dataSeries.itemCount; ++i) {
                 dataItem = [dataSeries dataItemAtIndex:i];
-                
-                dataItemPosition = [self convertDataItemPopositionToViewPosition:dataItem.position forDataSeries:dataSeries];
-                
-                distance.x = fabsf(dataItemPosition.x - touchPosition.x);
-                distance.y = fabsf(dataItemPosition.y - touchPosition.y);
-                if (distance.x < minimumDistance.x || (distance.x == minimumDistance.x && distance.y < minimumDistance.y)) {
-                    minimumDistance.x = distance.x;
-                    minimumDistance.y = distance.y;
-                    closestItem = dataItem;
-                    closestSeries = dataSeries;
-                    closestPos = CGPointMake(dataItemPosition.x - 3.0f, dataItemPosition.y - 7.0f);
+                if (dataItem.selectable) {
+                    
+                    dataItemPosition = [self convertDataItemPopositionToViewPosition:dataItem.position forDataSeries:dataSeries];
+                    
+                    distance.x = fabsf(dataItemPosition.x - touchPosition.x);
+                    distance.y = fabsf(dataItemPosition.y - touchPosition.y);
+                    if (distance.x < minimumDistance.x || (distance.x == minimumDistance.x && distance.y < minimumDistance.y)) {
+                        minimumDistance.x = distance.x;
+                        minimumDistance.y = distance.y;
+                        closestItem = dataItem;
+                        closestSeries = dataSeries;
+                        closestPos = CGPointMake(dataItemPosition.x - 3.0f, dataItemPosition.y - 7.0f);
+                    }
                 }
             }
         }
