@@ -17,12 +17,11 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 @interface MRLineChartDataItem : NSObject
 
 @property (nonatomic, assign, readonly) NSUInteger index;
-@property (nonatomic, assign, readonly) float x; // should be within the x range
-@property (nonatomic, assign, readonly) float y; // should be within the y range
+@property (nonatomic, assign, readonly) CGPoint position; // should be within the x & y ranges
 @property (nonatomic, strong, readonly) NSString *xLabel; // label to be shown on the x axis
 @property (nonatomic, strong, readonly) NSString *dataLabel; // label to be shown directly at the data item
 
-+ (MRLineChartDataItem *)dataItemWithX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel;
++ (MRLineChartDataItem *)dataItemWithPosition:(CGPoint)position xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel;
 
 @end
 

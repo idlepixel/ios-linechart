@@ -42,22 +42,20 @@
 @interface MRLineChartDataItem ()
 
 @property (nonatomic, assign, readwrite) NSUInteger index;
-@property (nonatomic, assign, readwrite) float x; // should be within the x range
-@property (nonatomic, assign, readwrite) float y; // should be within the y range
+@property (nonatomic, assign, readwrite) CGPoint position; // should be within the x & y ranges
 @property (nonatomic, strong, readwrite) NSString *xLabel; // label to be shown on the x axis
 @property (nonatomic, strong, readwrite) NSString *dataLabel; // label to be shown directly at the data item
 
-- (id)initWithhX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel;
+- (id)initWithPosition:(CGPoint)position xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel;
 
 @end
 
 @implementation MRLineChartDataItem
 
-- (id)initWithhX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel
+- (id)initWithPosition:(CGPoint)position xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel
 {
     if ((self = [super init])) {
-        self.x = x;
-        self.y = y;
+        self.position = position;
         self.xLabel = xLabel;
         self.dataLabel = dataLabel;
         self.index = NSNotFound;
@@ -65,9 +63,9 @@
     return self;
 }
 
-+ (MRLineChartDataItem *)dataItemWithX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel
++ (MRLineChartDataItem *)dataItemWithPosition:(CGPoint)position xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel;
 {
-    return [[MRLineChartDataItem alloc] initWithhX:x y:y xLabel:xLabel dataLabel:dataLabel];
+    return [[MRLineChartDataItem alloc] initWithPosition:position xLabel:xLabel dataLabel:dataLabel];
 }
 
 @end
@@ -304,13 +302,13 @@
                 
                 CGMutablePathRef path = CGPathCreateMutable();
                 CGPathMoveToPoint(path, NULL,
-                                  xStart + round(((dataItem.x - dataSeries.xMin) / xRangeLen) * availableWidth),
-                                  yStart + round((1.0f - (dataItem.y - self.yMin) / yRangeLen) * availableHeight));
+                                  xStart + round(((dataItem.position.x - dataSeries.xMin) / xRangeLen) * availableWidth),
+                                  yStart + round((1.0f - (dataItem.position.y - self.yMin) / yRangeLen) * availableHeight));
                 for(NSUInteger i = 1; i < dataSeries.itemCount; ++i) {
                     dataItem = [dataSeries dataItemAtIndex:i];
                     CGPathAddLineToPoint(path, NULL,
-                                         xStart + round(((dataItem.x - dataSeries.xMin) / xRangeLen) * availableWidth),
-                                         yStart + round((1.0f - (dataItem.y - self.yMin) / yRangeLen) * availableHeight));
+                                         xStart + round(((dataItem.position.x - dataSeries.xMin) / xRangeLen) * availableWidth),
+                                         yStart + round((1.0f - (dataItem.position.y - self.yMin) / yRangeLen) * availableHeight));
                 }
                 
                 CGContextAddPath(c, path);
@@ -340,8 +338,8 @@
             MRLineChartDataItem *dataItem = nil;
             for(NSUInteger i = 0; i < dataSeries.itemCount; ++i) {
                 dataItem = [dataSeries dataItemAtIndex:i];
-                CGFloat xVal = xStart + round((xRangeLen == 0.0f ? 0.5f : ((dataItem.x - dataSeries.xMin) / xRangeLen)) * availableWidth);
-                CGFloat yVal = yStart + round((1.0f - (dataItem.y - self.yMin) / yRangeLen) * availableHeight);
+                CGFloat xVal = xStart + round((xRangeLen == 0.0f ? 0.5f : ((dataItem.position.x - dataSeries.xMin) / xRangeLen)) * availableWidth);
+                CGFloat yVal = yStart + round((1.0f - (dataItem.position.y - self.yMin) / yRangeLen) * availableHeight);
                 [self.backgroundColor setFill];
                 CGContextFillEllipseInRect(c, CGRectMake(xVal - padRadius, yVal - padRadius, padDiameter, padDiameter));
                 [dataSeries.pointColor setFill];
@@ -387,8 +385,8 @@
         float xRangeLen = dataSeries.xMax - dataSeries.xMin;
         for (NSUInteger i = 0; i < dataSeries.itemCount; ++i) {
             dataItem = [dataSeries dataItemAtIndex:i];
-            CGFloat xVal = round((xRangeLen == 0.0f ? 0.5f : ((dataItem.x - dataSeries.xMin) / xRangeLen)) * availableWidth);
-            CGFloat yVal = round((1.0f - (dataItem.y - self.yMin) / yRangeLen) * availableHeight);
+            CGFloat xVal = round((xRangeLen == 0.0f ? 0.5f : ((dataItem.position.x - dataSeries.xMin) / xRangeLen)) * availableWidth);
+            CGFloat yVal = round((1.0f - (dataItem.position.y - self.yMin) / yRangeLen) * availableHeight);
             
             distance.x = fabsf(xVal - xPos);
             distance.y = fabsf(yVal - yPos);
