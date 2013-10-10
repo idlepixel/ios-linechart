@@ -44,7 +44,7 @@ NS_INLINE NSString *DateString(NSDate *date)
         d1.itemCount = 6;
         NSMutableArray *arr = [NSMutableArray array];
         for (NSUInteger i = 0; i < 4; ++i) {
-            [arr addObject:@(d1.xMin + (rand() / (float)RAND_MAX) * (d1.xMax - d1.xMin))];
+            [arr addObject:@(d1.xMin + (rand() / (CGFloat)RAND_MAX) * (d1.xMax - d1.xMin))];
         }
         [arr addObject:@(d1.xMin)];
         [arr addObject:@(d1.xMax)];
@@ -53,11 +53,11 @@ NS_INLINE NSString *DateString(NSDate *date)
         }];
         NSMutableArray *arr2 = [NSMutableArray array];
         for(NSUInteger i = 0; i < 6; ++i) {
-            [arr2 addObject:@((rand() / (float)RAND_MAX) * 6)];
+            [arr2 addObject:@((rand() / (CGFloat)RAND_MAX) * 6)];
         }
         d1.getData = ^(NSUInteger item) {
-            float x = [arr[item] floatValue];
-            float y = [arr2[item] floatValue];
+            CGFloat x = [arr[item] floatValue];
+            CGFloat y = [arr2[item] floatValue];
             NSString *label1 = DateString([date1 dateByAddingTimeInterval:x]);
             NSString *label2 = [NSString stringWithFormat:@"%f", y];
             return [MRLineChartDataItem dataItemWithPosition:CGPointMake(x, y) xLabel:label1 dataLabel:label2];
@@ -76,7 +76,7 @@ NS_INLINE NSString *DateString(NSDate *date)
         d1.itemCount = 8;
         NSMutableArray *arr = [NSMutableArray array];
         for (NSUInteger i = 0; i < d1.itemCount - 2; ++i) {
-            [arr addObject:@(d1.xMin + (rand() / (float)RAND_MAX) * (d1.xMax - d1.xMin))];
+            [arr addObject:@(d1.xMin + (rand() / (CGFloat)RAND_MAX) * (d1.xMax - d1.xMin))];
         }
         [arr addObject:@(d1.xMin)];
         [arr addObject:@(d1.xMax)];
@@ -85,11 +85,11 @@ NS_INLINE NSString *DateString(NSDate *date)
         }];
         NSMutableArray *arr2 = [NSMutableArray array];
         for (NSUInteger i = 0; i < d1.itemCount; ++i) {
-            [arr2 addObject:@((rand() / (float)RAND_MAX) * 6)];
+            [arr2 addObject:@((rand() / (CGFloat)RAND_MAX) * 6)];
         }
         d1.getData = ^(NSUInteger item) {
-            float x = [arr[item] floatValue];
-            float y = [arr2[item] floatValue];
+            CGFloat x = [arr[item] floatValue];
+            CGFloat y = [arr2[item] floatValue];
             NSString *label1 = DateString([date1 dateByAddingTimeInterval:x]);
             NSString *label2 = [NSString stringWithFormat:@"%f", y];
             return [MRLineChartDataItem dataItemWithPosition:CGPointMake(x, y) xLabel:label1 dataLabel:label2];
@@ -120,14 +120,14 @@ NS_INLINE NSString *DateString(NSDate *date)
         
         NSMutableArray *vals = [NSMutableArray new];
         for (NSUInteger i = 0; i < d.itemCount; ++i) {
-            [vals addObject:@((rand() / (float)RAND_MAX) * (31 - 1) + 1)];
+            [vals addObject:@((rand() / (CGFloat)RAND_MAX) * (31 - 1) + 1)];
         }
         [vals sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             return [obj1 compare:obj2];
         }];
         d.getData = ^(NSUInteger item) {
-            float x = [vals[item] floatValue];
-            float y = powf(2, x / 7);
+            CGFloat x = [vals[item] floatValue];
+            CGFloat y = powf(2, x / 7);
             NSString *label1 = [NSString stringWithFormat:@"%d", item];
             NSString *label2 = [NSString stringWithFormat:@"%f", y];
             return [MRLineChartDataItem dataItemWithPosition:CGPointMake(x, y) xLabel:label1 dataLabel:label2];

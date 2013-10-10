@@ -350,7 +350,7 @@
         // draw chart lines
         if (!dataSeries.lineHidden) {
             dataDrawn = YES;
-            float xRangeLen = dataSeries.xMax - dataSeries.xMin;
+            CGFloat xRangeLen = dataSeries.xMax - dataSeries.xMin;
             if(dataSeries.itemCount >= 2) {
                 MRLineChartDataItem *dataItem = [dataSeries dataItemAtIndex:0];
                 
@@ -381,7 +381,7 @@
         // draw chart points
         if (!dataSeries.pointsHidden) {
             dataDrawn = YES;
-            float xRangeLen = dataSeries.xMax - dataSeries.xMin;
+            CGFloat xRangeLen = dataSeries.xMax - dataSeries.xMin;
             
             CGFloat outerRadius = dataSeries.pointRadius;
             CGFloat innerRadius = MAX(outerRadius - dataSeries.pointLineWidth, 0.0f);
@@ -457,7 +457,7 @@
     MRLineChartDataItem *dataItem = nil;
     
     for (MRLineChartDataSeries *dataSeries in self.data) {
-        float xRangeLen = dataSeries.xMax - dataSeries.xMin;
+        CGFloat xRangeLen = dataSeries.xMax - dataSeries.xMin;
         for (NSUInteger i = 0; i < dataSeries.itemCount; ++i) {
             dataItem = [dataSeries dataItemAtIndex:i];
             CGFloat xVal = round((xRangeLen == 0.0f ? 0.5f : ((dataItem.position.x - dataSeries.xMin) / xRangeLen)) * availableWidth);

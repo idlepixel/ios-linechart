@@ -53,8 +53,8 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 @property (nonatomic, assign) BOOL lineHidden; // Switch to turn off lines connecting data points.
 
 
-@property (nonatomic, assign) float xMin;
-@property (nonatomic, assign) float xMax;
+@property (nonatomic, assign) CGFloat xMin;
+@property (nonatomic, assign) CGFloat xMax;
 
 @property (nonatomic, copy) MRLineChartDataGetter getData;
 
@@ -81,8 +81,8 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 @property (nonatomic, assign) BOOL xAxisLabelHidden;
 @property (nonatomic, assign) BOOL yAxisLabelHidden;
 
-@property (nonatomic, assign) float yMin;
-@property (nonatomic, assign) float yMax;
+@property (nonatomic, assign) CGFloat yMin;
+@property (nonatomic, assign) CGFloat yMax;
 @property (nonatomic, strong) NSArray *ySteps; // Array of step names (NSString). At each step, a scale line is shown.
 @property (nonatomic, assign) NSUInteger xStepsCount; // number of steps in x. At each x step, a vertical scale line is shown. if x < 2, nothing is done
 
