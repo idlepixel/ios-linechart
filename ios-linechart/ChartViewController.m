@@ -60,7 +60,7 @@ NS_INLINE NSString *DateString(NSDate *date)
             float y = [arr2[item] floatValue];
             NSString *label1 = DateString([date1 dateByAddingTimeInterval:x]);
             NSString *label2 = [NSString stringWithFormat:@"%f", y];
-            return [MRLineChartDataItem dataItemWithX:x y:y xLabel:label1 dataLabel:label2];
+            return [MRLineChartDataItem dataItemWithPosition:CGPointMake(x, y) xLabel:label1 dataLabel:label2];
         };
     }
     
@@ -84,7 +84,7 @@ NS_INLINE NSString *DateString(NSDate *date)
             return [obj1 compare:obj2];
         }];
         NSMutableArray *arr2 = [NSMutableArray array];
-        for(NSUInteger i = 0; i < d1.itemCount; ++i) {
+        for (NSUInteger i = 0; i < d1.itemCount; ++i) {
             [arr2 addObject:@((rand() / (float)RAND_MAX) * 6)];
         }
         d1.getData = ^(NSUInteger item) {
@@ -92,7 +92,7 @@ NS_INLINE NSString *DateString(NSDate *date)
             float y = [arr2[item] floatValue];
             NSString *label1 = DateString([date1 dateByAddingTimeInterval:x]);
             NSString *label2 = [NSString stringWithFormat:@"%f", y];
-            return [MRLineChartDataItem dataItemWithX:x y:y xLabel:label1 dataLabel:label2];
+            return [MRLineChartDataItem dataItemWithPosition:CGPointMake(x, y) xLabel:label1 dataLabel:label2];
         };
     }
     
@@ -118,8 +118,9 @@ NS_INLINE NSString *DateString(NSDate *date)
         d.itemCount = 10;
         
         NSMutableArray *vals = [NSMutableArray new];
-        for(NSUInteger i = 0; i < d.itemCount; ++i)
+        for (NSUInteger i = 0; i < d.itemCount; ++i) {
             [vals addObject:@((rand() / (float)RAND_MAX) * (31 - 1) + 1)];
+        }
         [vals sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             return [obj1 compare:obj2];
         }];
@@ -128,7 +129,7 @@ NS_INLINE NSString *DateString(NSDate *date)
             float y = powf(2, x / 7);
             NSString *label1 = [NSString stringWithFormat:@"%d", item];
             NSString *label2 = [NSString stringWithFormat:@"%f", y];
-            return [MRLineChartDataItem dataItemWithX:x y:y xLabel:label1 dataLabel:label2];
+            return [MRLineChartDataItem dataItemWithPosition:CGPointMake(x, y) xLabel:label1 dataLabel:label2];
         };
         
         MRLineChartView *chartView = [[MRLineChartView alloc] initWithFrame:CGRectMake(20, 700, 500, 300)];
