@@ -9,6 +9,16 @@
 #import <UIKit/UIKit.h>
 
 @class MRLineChartDataItem;
+@class MRLineChartDataSeries;
+@class MRLineChartView;
+
+@protocol MRLineChartViewDelegate <NSObject>
+
+@optional
+- (void)lineChartView:(MRLineChartView *)view didSelectItem:(MRLineChartDataItem *)dataItem inSeries:(MRLineChartDataSeries *)dataSeries;
+- (void)lineChartViewDidClearSelection:(MRLineChartView *)view;
+
+@end
 
 typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 
@@ -63,6 +73,8 @@ typedef MRLineChartDataItem *(^MRLineChartDataGetter)(NSUInteger item);
 @property (nonatomic,assign) CGFloat gridLineWidth UI_APPEARANCE_SELECTOR;
 @property (nonatomic,assign) CGFloat gridDashOnLength UI_APPEARANCE_SELECTOR;
 @property (nonatomic,assign) CGFloat gridDashOffLength UI_APPEARANCE_SELECTOR;
+
+@property (nonatomic, weak) id<MRLineChartViewDelegate> delegate;
 
 @property (nonatomic, strong) NSArray *data; // Array of `MRLineChartDataSeries` objects, one for each line.
 

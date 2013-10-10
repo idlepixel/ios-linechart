@@ -9,7 +9,7 @@
 #import "ChartViewController.h"
 #import "MRLineChartView.h"
 
-@interface ChartViewController ()
+@interface ChartViewController () <MRLineChartViewDelegate>
 
 @end
 
@@ -101,6 +101,7 @@ NS_INLINE NSString *DateString(NSDate *date)
     chartView.yMax = 6;
     chartView.ySteps = @[@"1.0",@"2.0",@"3.0",@"4.0",@"5.0",@"A big label at 6.0"];
     chartView.data = @[d1x,d2x];
+    chartView.delegate = self;
 
 //    chartView.drawsDataPoints = NO; // Uncomment to turn off circles at data points.
 //    chartView.drawsDataLines = NO; // Uncomment to turn off lines connecting data points.
@@ -140,9 +141,22 @@ NS_INLINE NSString *DateString(NSDate *date)
                              [NSString stringWithFormat:@"%.02f", chartView.yMax]];
         chartView.xStepsCount = 5;
         chartView.data = @[d];
+        chartView.delegate = self;
         
         [self.view addSubview:chartView];
     }
+}
+
+#pragma mark - MRLineChartViewDelegate
+
+-(void)lineChartView:(MRLineChartView *)view didSelectItem:(MRLineChartDataItem *)dataItem inSeries:(MRLineChartDataSeries *)dataSeries
+{
+    NSLog(@"%@ did select %@[%i] in %@",view,dataItem,dataItem.index,dataSeries);
+}
+
+-(void)lineChartViewDidClearSelection:(MRLineChartView *)view
+{
+    NSLog(@"%@ did clear selection",view);
 }
 
 @end

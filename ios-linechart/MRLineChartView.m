@@ -107,6 +107,9 @@
 @property (nonatomic, strong) UIView *currentPosView;
 @property (nonatomic, strong) UILabel *xAxisLabel;
 
+@property (nonatomic, strong) MRLineChartDataSeries *lastSelectedDataSeries;
+@property (nonatomic, assign) NSUInteger lastSelectedDataItemIndex;
+
 @end
 
 
@@ -355,6 +358,26 @@
     } // warn if no data was drawn
 }
 
+- (void)notifyDelegateOfSelectedItem:(MRLineChartDataItem *)dataItem inSeries:(MRLineChartDataSeries *)dataSeries
+{
+    if (dataItem != nil && dataSeries != nil && (dataSeries != self.lastSelectedDataSeries || dataItem.index != self.lastSelectedDataItemIndex)) {
+        if ([self.delegate respondsToSelector:@selector(lineChartView:didSelectItem:inSeries:)]) {
+            [self.delegate lineChartView:self didSelectItem:dataItem inSeries:dataSeries];
+        }
+    }
+    self.lastSelectedDataSeries = dataSeries;
+    self.lastSelectedDataItemIndex = dataItem.index;
+}
+
+- (void)notifyDelegateOfClearedSelection
+{
+    if ([self.delegate respondsToSelector:@selector(lineChartViewDidClearSelection:)]) {
+        [self.delegate lineChartViewDidClearSelection:self];
+    }
+    self.lastSelectedDataSeries = nil;
+    self.lastSelectedDataItemIndex = NSNotFound;
+}
+
 - (void)showIndicatorForTouch:(UITouch *)touch
 {
     if (! self.infoView) {
@@ -400,6 +423,8 @@
         }
     }
     
+    [self notifyDelegateOfSelectedItem:closestItem inSeries:closestSeries];
+    
     self.infoView.infoLabel.text = closestItem.dataLabel;
     self.infoView.tapPoint = closestPos;
     [self.infoView sizeToFit];
@@ -433,6 +458,8 @@
 
 - (void)hideIndicator
 {
+    [self notifyDelegateOfClearedSelection];
+    
     [UIView animateWithDuration:0.1f animations:^{
         self.infoView.alpha = 0.0f;
         self.currentPosView.alpha = 0.0f;
