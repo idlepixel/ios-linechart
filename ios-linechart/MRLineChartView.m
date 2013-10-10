@@ -641,7 +641,7 @@
 
 -(void)setGridLineColor:(UIColor *)gridLineColor
 {
-    if (_gridLineColor == nil || [_gridLineColor isEqual:gridLineColor]) {
+    if (_gridLineColor == nil || ![_gridLineColor isEqual:gridLineColor]) {
         _gridLineColor = gridLineColor;
         [self setNeedsDisplay];
     }
@@ -649,7 +649,7 @@
 
 -(void)setCurrentPositionColor:(UIColor *)currentPositionColor
 {
-    if (_currentPositionColor == nil || [_currentPositionColor isEqual:currentPositionColor]) {
+    if (_currentPositionColor == nil || ![_currentPositionColor isEqual:currentPositionColor]) {
         _currentPositionColor = currentPositionColor;
         self.currentPositionView.backgroundColor = currentPositionColor;
     }
@@ -657,7 +657,7 @@
 
 -(void)setXAxisLabelColor:(UIColor *)xAxisLabelColor
 {
-    if (_xAxisLabelColor == nil || [_xAxisLabelColor isEqual:xAxisLabelColor]) {
+    if (_xAxisLabelColor == nil || ![_xAxisLabelColor isEqual:xAxisLabelColor]) {
         _xAxisLabelColor = xAxisLabelColor;
         [self setNeedsDisplay];
     }
@@ -665,7 +665,7 @@
 
 -(void)setYAxisLabelColor:(UIColor *)yAxisLabelColor
 {
-    if (_yAxisLabelColor == nil || [_yAxisLabelColor isEqual:yAxisLabelColor]) {
+    if (_yAxisLabelColor == nil || ![_yAxisLabelColor isEqual:yAxisLabelColor]) {
         _yAxisLabelColor = yAxisLabelColor;
         [self setNeedsDisplay];
     }
