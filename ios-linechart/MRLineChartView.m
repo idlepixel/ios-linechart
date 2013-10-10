@@ -357,7 +357,7 @@
         CGFloat widthPerStep = chartFrame.size.width / (xCnt - 1.0f);
         
         for (NSUInteger i = 0; i < xCnt; ++i) {
-            NSLog(@"i: %d x: %d", i, xCnt);
+            //NSLog(@"i: %d x: %d", i, xCnt);
             CGFloat x = chartFrame.origin.x + widthPerStep * (xCnt - 1.0f - (CGFloat)i);
             
             if (self.gridLineColor) {
