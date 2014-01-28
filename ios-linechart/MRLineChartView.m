@@ -328,7 +328,7 @@
     CGFloat dashedPattern[] = {self.gridDashOnLength,self.gridDashOffLength};
     
     // draw scale and horizontal lines
-    CGFloat heightPerStep = self.ySteps == nil || [self.ySteps count] == 0 ? chartFrame.size.height : (chartFrame.size.height / ([self.ySteps count] - 1));
+    CGFloat heightPerStep = self.ySteps == nil || [self.ySteps count] == 0 ? chartFrame.size.height : (chartFrame.size.height / MAX([self.ySteps count] - 1.0f, 1.0f));
     
     NSUInteger i = 0;
     CGContextSaveGState(c);
